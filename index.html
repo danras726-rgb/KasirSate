@@ -10,20 +10,20 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
-        /* Custom Scrollbar untuk bagian preview gambar */
+        /* Custom Scrollbar */
         .scrollbar-thin::-webkit-scrollbar {
             height: 6px;
         }
         .scrollbar-thin::-webkit-scrollbar-track {
-            background: #1e293b; 
+            background: #f1f5f9; 
             border-radius: 4px;
         }
         .scrollbar-thin::-webkit-scrollbar-thumb {
-            background: #475569; 
+            background: #cbd5e1; 
             border-radius: 4px;
         }
         .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-            background: #64748b; 
+            background: #94a3b8; 
         }
 
         /* Print Styles */
@@ -38,32 +38,34 @@
         }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-200 font-sans selection:bg-blue-500/30 pb-20 md:pb-0">
+<!-- Mengubah background menjadi sangat terang (slate-50) senada dengan icon -->
+<body class="bg-slate-50 text-slate-800 font-sans selection:bg-emerald-500/30 pb-20 md:pb-0">
 
     <!-- ==========================================
-         TAMPILAN APLIKASI UTAMA (Layar Layar Biasa)
+         TAMPILAN APLIKASI UTAMA
          ========================================== -->
     <div id="app-view" class="print-hidden min-h-screen">
         
         <!-- Header & Navigasi -->
-        <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-10">
+        <header class="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-sm">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <div class="flex items-center gap-3">
-                        <div class="bg-blue-600 p-2 rounded-lg">
-                            <i data-lucide="activity" class="w-6 h-6 text-white"></i>
+                        <!-- Icon diganti warna Emerald Gradasi -->
+                        <div class="bg-gradient-to-tr from-emerald-600 to-emerald-400 p-2 rounded-lg shadow-sm">
+                            <i data-lucide="trending-up" class="w-6 h-6 text-white"></i>
                         </div>
-                        <h1 class="text-xl font-bold text-white tracking-wide">Jurnal<span class="text-blue-500">Danras</span></h1>
+                        <h1 class="text-xl font-bold text-slate-800 tracking-wide">Jurnal<span class="text-emerald-600">Danras</span></h1>
                     </div>
                     
-                    <nav class="hidden md:flex space-x-1 bg-slate-800 p-1 rounded-lg">
-                        <button onclick="app.switchTab('dashboard')" id="nav-desktop-dashboard" class="px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 bg-blue-600 text-white shadow-sm">
+                    <nav class="hidden md:flex space-x-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
+                        <button onclick="app.switchTab('dashboard')" id="nav-desktop-dashboard" class="px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 bg-emerald-500 text-white shadow-sm">
                             <i data-lucide="pie-chart" class="w-4 h-4"></i> Dashboard
                         </button>
-                        <button onclick="app.switchTab('journal')" id="nav-desktop-journal" class="px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700">
+                        <button onclick="app.switchTab('journal')" id="nav-desktop-journal" class="px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-white">
                             <i data-lucide="book-open" class="w-4 h-4"></i> Jurnal & Laporan
                         </button>
-                        <button onclick="app.switchTab('learning')" id="nav-desktop-learning" class="px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700">
+                        <button onclick="app.switchTab('learning')" id="nav-desktop-learning" class="px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-white">
                             <i data-lucide="book-text" class="w-4 h-4"></i> Edukasi
                         </button>
                     </nav>
@@ -74,61 +76,61 @@
         <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
             
             <!-- Widget Jam Global -->
-            <div class="mb-6 flex items-center gap-2 text-slate-400">
+            <div class="mb-4 flex items-center gap-2 text-slate-500">
                 <i data-lucide="clock" class="w-[18px] h-[18px]"></i>
                 <h2 class="font-semibold text-sm uppercase tracking-wider">Jam Pasar Global</h2>
             </div>
             <div id="market-clocks" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <!-- Clocks will be rendered here by JS -->
+                <!-- Clocks rendered by JS -->
             </div>
 
             <!-- --- TAB: DASHBOARD --- -->
             <div id="tab-dashboard" class="space-y-6 animate-in fade-in duration-500 block">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <!-- Modal Awal -->
-                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-lg relative">
+                    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm relative">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-slate-400 font-medium flex items-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> Modal Awal</h3>
-                            <button id="btn-edit-capital" onclick="app.toggleEditCapital()" class="text-slate-500 hover:text-blue-400"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                            <h3 class="text-slate-500 font-medium flex items-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> Modal Awal</h3>
+                            <button id="btn-edit-capital" onclick="app.toggleEditCapital()" class="text-slate-400 hover:text-emerald-500"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
                         </div>
                         
                         <div id="capital-display" class="block">
-                            <p class="text-3xl font-bold text-white tracking-tight mt-1">$<span id="initial-capital-text">0.00</span></p>
+                            <p class="text-3xl font-bold text-slate-800 tracking-tight mt-1">$<span id="initial-capital-text">0.00</span></p>
                         </div>
                         
                         <div id="capital-edit" class="hidden items-center gap-2 mt-2">
-                            <span class="text-xl text-slate-400">$</span>
-                            <input type="number" id="input-capital" class="w-full bg-slate-900 border border-slate-700 rounded p-1 text-white font-mono focus:outline-none" />
-                            <button onclick="app.saveCapital()" class="bg-blue-600 p-1.5 rounded text-white hover:bg-blue-700"><i data-lucide="save" class="w-4 h-4"></i></button>
+                            <span class="text-xl text-slate-500">$</span>
+                            <input type="number" id="input-capital" class="w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-slate-800 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+                            <button onclick="app.saveCapital()" class="bg-emerald-500 p-2 rounded text-white hover:bg-emerald-600"><i data-lucide="save" class="w-4 h-4"></i></button>
                         </div>
                     </div>
 
                     <!-- Saldo Saat Ini -->
-                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-lg relative bg-gradient-to-br from-slate-800 to-slate-800/50">
-                        <h3 class="text-slate-400 font-medium mb-2">Saldo Saat Ini</h3>
-                        <p id="current-balance" class="text-4xl font-bold tracking-tight text-blue-400">$0.00</p>
-                        <p class="text-xs text-slate-500 mt-2">Modal + Total PnL</p>
+                    <div class="bg-gradient-to-br from-emerald-50 to-white border border-emerald-100 rounded-2xl p-6 shadow-sm relative">
+                        <h3 class="text-emerald-700 font-medium mb-2">Saldo Saat Ini</h3>
+                        <p id="current-balance" class="text-4xl font-bold tracking-tight text-emerald-600">$0.00</p>
+                        <p class="text-xs text-emerald-600/70 mt-2">Modal + Total PnL</p>
                     </div>
 
                     <!-- Total PnL -->
-                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-lg relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="dollar-sign" class="w-20 h-20"></i></div>
-                        <h3 class="text-slate-400 font-medium mb-2">Net Profit/Loss</h3>
-                        <p id="net-pnl" class="text-3xl font-bold tracking-tight text-slate-400">$0.00</p>
+                    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-[0.03] text-slate-800"><i data-lucide="dollar-sign" class="w-20 h-20"></i></div>
+                        <h3 class="text-slate-500 font-medium mb-2">Net Profit/Loss</h3>
+                        <p id="net-pnl" class="text-3xl font-bold tracking-tight text-slate-800">$0.00</p>
                         <div class="mt-4 flex items-center gap-2 text-sm">
                             <span id="pnl-icon"></span>
-                            <span class="text-slate-400">Total <span id="total-trades-count">0</span> trade</span>
+                            <span class="text-slate-500">Total <span id="total-trades-count" class="font-bold text-slate-700">0</span> trade</span>
                         </div>
                     </div>
 
                     <!-- Win Rate -->
-                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-lg">
-                        <h3 class="text-slate-400 font-medium mb-2">Win Rate</h3>
-                        <p id="win-rate-text" class="text-3xl font-bold text-white tracking-tight">0%</p>
-                        <div class="w-full bg-slate-700 rounded-full h-2 mt-4 overflow-hidden">
-                            <div id="win-rate-bar" class="bg-blue-500 h-full rounded-full" style="width: 0%"></div>
+                    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                        <h3 class="text-slate-500 font-medium mb-2">Win Rate</h3>
+                        <p id="win-rate-text" class="text-3xl font-bold text-slate-800 tracking-tight">0%</p>
+                        <div class="w-full bg-slate-100 rounded-full h-2 mt-4 overflow-hidden">
+                            <div id="win-rate-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                         </div>
-                        <p id="win-loss-text" class="mt-2 text-xs text-slate-400">0 Win / 0 Loss</p>
+                        <p id="win-loss-text" class="mt-2 text-xs text-slate-500">0 Win / 0 Loss</p>
                     </div>
                 </div>
             </div>
@@ -137,65 +139,66 @@
             <div id="tab-journal" class="space-y-6 animate-in fade-in duration-500 hidden">
                 
                 <!-- Form Tambah Trade -->
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
-                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <i data-lucide="plus" class="w-5 h-5 text-blue-400"></i> Catat Trade Baru
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                    <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                        <div class="p-1.5 bg-emerald-100 rounded-lg"><i data-lucide="plus" class="w-4 h-4 text-emerald-600"></i></div>
+                        Catat Trade Baru
                     </h2>
                     <form id="form-trade" class="space-y-4">
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div>
-                                <label class="block text-[10px] text-slate-400 mb-1 uppercase tracking-wider">Tanggal</label>
-                                <input type="date" id="trade-date" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none" />
+                                <label class="block text-[10px] text-slate-500 mb-1 uppercase tracking-wider font-bold">Tanggal</label>
+                                <input type="date" id="trade-date" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none transition-colors" />
                             </div>
                             <div>
-                                <label class="block text-[10px] text-slate-400 mb-1 uppercase tracking-wider">Aset (Cth: XAU)</label>
-                                <input type="text" id="trade-asset" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none uppercase" />
+                                <label class="block text-[10px] text-slate-500 mb-1 uppercase tracking-wider font-bold">Aset (Cth: XAU)</label>
+                                <input type="text" id="trade-asset" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none uppercase transition-colors" />
                             </div>
                             <div>
-                                <label class="block text-[10px] text-slate-400 mb-1 uppercase tracking-wider">Posisi</label>
-                                <select id="trade-type" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                                <label class="block text-[10px] text-slate-500 mb-1 uppercase tracking-wider font-bold">Posisi</label>
+                                <select id="trade-type" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none transition-colors">
                                     <option value="Long">Buy (Long)</option>
                                     <option value="Short">Sell (Short)</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-[10px] text-slate-400 mb-1 uppercase tracking-wider">PnL ($)</label>
-                                <input type="number" step="0.01" id="trade-pnl" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none" />
+                                <label class="block text-[10px] text-slate-500 mb-1 uppercase tracking-wider font-bold">PnL ($)</label>
+                                <input type="number" step="0.01" id="trade-pnl" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none transition-colors" />
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-[10px] text-slate-400 mb-1 flex items-center gap-1 uppercase tracking-wider"><i data-lucide="target" class="w-3 h-3"></i> TP (Opsional)</label>
-                                <input type="number" step="0.00001" id="trade-tp" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none" />
+                                <label class="block text-[10px] text-slate-500 mb-1 flex items-center gap-1 uppercase tracking-wider font-bold"><i data-lucide="target" class="w-3 h-3"></i> TP (Opsional)</label>
+                                <input type="number" step="0.00001" id="trade-tp" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none transition-colors" />
                             </div>
                             <div>
-                                <label class="block text-[10px] text-slate-400 mb-1 flex items-center gap-1 uppercase tracking-wider"><i data-lucide="shield-alert" class="w-3 h-3"></i> SL (Opsional)</label>
-                                <input type="number" step="0.00001" id="trade-sl" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none" />
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-[10px] text-slate-400 mb-1 uppercase tracking-wider">Catatan Entry</label>
-                                <textarea id="trade-notes" placeholder="Analisa..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none h-16 resize-none"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] text-slate-400 mb-1 flex items-center gap-1 uppercase tracking-wider"><i data-lucide="lightbulb" class="w-3 h-3 text-yellow-400"></i> Pembelajaran</label>
-                                <textarea id="trade-learning" placeholder="Pelajaran..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-yellow-500/50 focus:outline-none h-16 resize-none"></textarea>
+                                <label class="block text-[10px] text-slate-500 mb-1 flex items-center gap-1 uppercase tracking-wider font-bold"><i data-lucide="shield-alert" class="w-3 h-3"></i> SL (Opsional)</label>
+                                <input type="number" step="0.00001" id="trade-sl" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none transition-colors" />
                             </div>
                         </div>
 
-                        <div class="flex flex-col md:flex-row gap-4 items-end pt-2 border-t border-slate-700/50">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] text-slate-500 mb-1 uppercase tracking-wider font-bold">Catatan Entry</label>
+                                <textarea id="trade-notes" placeholder="Analisa..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none h-16 resize-none transition-colors"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-500 mb-1 flex items-center gap-1 uppercase tracking-wider font-bold"><i data-lucide="lightbulb" class="w-3 h-3 text-amber-500"></i> Pembelajaran</label>
+                                <textarea id="trade-learning" placeholder="Pelajaran..." class="w-full bg-amber-50/50 border border-amber-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-amber-500 focus:border-amber-500 focus:outline-none h-16 resize-none transition-colors"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col md:flex-row gap-4 items-end pt-3 border-t border-slate-100">
                             <div class="flex-1 w-full">
-                                <label class="block text-[10px] text-slate-400 mb-1 flex items-center gap-1 uppercase tracking-wider"><i data-lucide="image" class="w-3 h-3"></i> Upload Chart (Bisa Banyak)</label>
-                                <input type="file" multiple accept="image/*" id="trade-images-input" onchange="app.handleImageUpload(event, 'trade')" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-400 file:mr-4 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer" />
+                                <label class="block text-[10px] text-slate-500 mb-1 flex items-center gap-1 uppercase tracking-wider font-bold"><i data-lucide="image" class="w-3 h-3"></i> Upload Chart (Bisa Banyak)</label>
+                                <input type="file" multiple accept="image/*" id="trade-images-input" onchange="app.handleImageUpload(event, 'trade')" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-500 file:mr-4 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 cursor-pointer transition-colors" />
                                 
-                                <div id="trade-images-preview" class="flex gap-2 mt-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-slate-600 empty:hidden">
+                                <div id="trade-images-preview" class="flex gap-2 mt-2 overflow-x-auto pb-1 scrollbar-thin empty:hidden">
                                     <!-- Previews will appear here -->
                                 </div>
                             </div>
-                            <button type="submit" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                            <button type="submit" class="w-full md:w-auto bg-slate-800 hover:bg-slate-900 text-white px-8 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm">
                                 Simpan Trade
                             </button>
                         </div>
@@ -203,21 +206,21 @@
                 </div>
 
                 <!-- Filter & Export -->
-                <div class="flex justify-between items-center gap-4 bg-slate-800 border border-slate-700 rounded-xl p-3 shadow-sm">
-                    <input type="month" id="filter-month" onchange="app.updateFilterMonth(event)" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
-                    <div class="flex items-center gap-3">
+                <div class="flex justify-between items-center gap-4 bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
+                    <input type="month" id="filter-month" onchange="app.updateFilterMonth(event)" class="bg-slate-50 border border-slate-200 text-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+                    <div class="flex items-center gap-4">
                         <div class="text-right hidden sm:block">
-                            <p class="text-[10px] text-slate-400 uppercase">PnL Bulan Ini</p>
-                            <p id="monthly-pnl" class="font-mono text-sm font-bold text-slate-400">$0.00</p>
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">PnL Bulan Ini</p>
+                            <p id="monthly-pnl" class="font-mono text-sm font-bold text-slate-800">$0.00</p>
                         </div>
-                        <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 p-2 sm:px-4 sm:py-2 rounded-lg text-white text-sm font-medium transition-colors flex items-center gap-2">
-                            <i data-lucide="printer" class="w-4 h-4"></i> <span class="hidden sm:inline">PDF</span>
+                        <button onclick="window.print()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 p-2 sm:px-4 sm:py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-2">
+                            <i data-lucide="printer" class="w-4 h-4"></i> <span class="hidden sm:inline">Export PDF</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- Riwayat Trading List -->
-                <div id="trades-list" class="space-y-2">
+                <div id="trades-list" class="space-y-3">
                     <!-- Trades injected here -->
                 </div>
             </div>
@@ -226,32 +229,32 @@
             <div id="tab-learning" class="space-y-6 animate-in fade-in duration-500 hidden">
                 
                 <!-- Form Edukasi -->
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
-                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <i data-lucide="book-open" class="w-5 h-5 text-purple-400"></i> Catat Edukasi Baru
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                    <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                        <div class="p-1.5 bg-emerald-100 rounded-lg"><i data-lucide="book-open" class="w-4 h-4 text-emerald-600"></i></div>
+                        Catat Edukasi Baru
                     </h2>
                     <form id="form-learning" class="space-y-4">
-                        <div class="flex flex-col md:flex-row gap-3">
+                        <div class="flex flex-col md:flex-row gap-4">
                             <div class="w-full md:w-1/3">
-                                <label class="block text-[10px] text-slate-400 mb-1 uppercase tracking-wider">Topik / Istilah</label>
-                                <input type="text" id="learning-term" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-purple-500 focus:outline-none" />
+                                <label class="block text-[10px] text-slate-500 mb-1 uppercase tracking-wider font-bold">Topik / Istilah</label>
+                                <input type="text" id="learning-term" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-colors" />
                             </div>
                             <div class="w-full md:w-2/3">
-                                <label class="block text-[10px] text-slate-400 mb-1 uppercase tracking-wider">Penjelasan</label>
-                                <input type="text" id="learning-def" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-purple-500 focus:outline-none" />
+                                <label class="block text-[10px] text-slate-500 mb-1 uppercase tracking-wider font-bold">Penjelasan</label>
+                                <input type="text" id="learning-def" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-colors" />
                             </div>
                         </div>
 
-                        <div class="flex flex-col md:flex-row gap-4 items-end">
+                        <div class="flex flex-col md:flex-row gap-4 items-end pt-2 border-t border-slate-100">
                             <div class="flex-1 w-full">
-                                <label class="block text-[10px] text-slate-400 mb-1 flex items-center gap-1 uppercase tracking-wider"><i data-lucide="image" class="w-3 h-3"></i> Lampirkan Gambar (Opsional)</label>
-                                <input type="file" multiple accept="image/*" id="learning-images-input" onchange="app.handleImageUpload(event, 'learning')" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-400 file:mr-4 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700 cursor-pointer" />
+                                <label class="block text-[10px] text-slate-500 mb-1 flex items-center gap-1 uppercase tracking-wider font-bold"><i data-lucide="image" class="w-3 h-3"></i> Lampirkan Gambar</label>
+                                <input type="file" multiple accept="image/*" id="learning-images-input" onchange="app.handleImageUpload(event, 'learning')" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-500 file:mr-4 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 cursor-pointer transition-colors" />
                                 
-                                <div id="learning-images-preview" class="flex gap-2 mt-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-slate-600 empty:hidden">
-                                    <!-- Previews will appear here -->
+                                <div id="learning-images-preview" class="flex gap-2 mt-2 overflow-x-auto pb-1 scrollbar-thin empty:hidden">
                                 </div>
                             </div>
-                            <button type="submit" class="w-full md:w-auto bg-purple-600 hover:bg-purple-700 text-white px-8 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                            <button type="submit" class="w-full md:w-auto bg-slate-800 hover:bg-slate-900 text-white px-8 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm">
                                 Simpan Catatan
                             </button>
                         </div>
@@ -259,7 +262,7 @@
                 </div>
 
                 <!-- Daftar Edukasi List -->
-                <div id="learnings-list" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div id="learnings-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Learnings injected here -->
                 </div>
             </div>
@@ -267,18 +270,18 @@
         </main>
 
         <!-- Navigasi Mobile (Bottom Bar) -->
-        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 z-40 flex justify-around items-center">
-            <button onclick="app.switchTab('dashboard')" id="nav-mobile-dashboard" class="flex flex-col items-center justify-center w-full py-3 text-blue-500">
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 flex justify-around items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+            <button onclick="app.switchTab('dashboard')" id="nav-mobile-dashboard" class="flex flex-col items-center justify-center w-full py-3 text-emerald-600 transition-colors">
                 <i data-lucide="pie-chart" class="w-6 h-6 mb-1"></i>
-                <span class="text-[10px] font-medium">Dashboard</span>
+                <span class="text-[10px] font-bold">Dashboard</span>
             </button>
-            <button onclick="app.switchTab('journal')" id="nav-mobile-journal" class="flex flex-col items-center justify-center w-full py-3 text-slate-500 hover:text-slate-400">
+            <button onclick="app.switchTab('journal')" id="nav-mobile-journal" class="flex flex-col items-center justify-center w-full py-3 text-slate-400 hover:text-emerald-600 transition-colors">
                 <i data-lucide="book-open" class="w-6 h-6 mb-1"></i>
-                <span class="text-[10px] font-medium">Jurnal</span>
+                <span class="text-[10px] font-bold">Jurnal</span>
             </button>
-            <button onclick="app.switchTab('learning')" id="nav-mobile-learning" class="flex flex-col items-center justify-center w-full py-3 text-slate-500 hover:text-slate-400">
+            <button onclick="app.switchTab('learning')" id="nav-mobile-learning" class="flex flex-col items-center justify-center w-full py-3 text-slate-400 hover:text-emerald-600 transition-colors">
                 <i data-lucide="book-text" class="w-6 h-6 mb-1"></i>
-                <span class="text-[10px] font-medium">Edukasi</span>
+                <span class="text-[10px] font-bold">Edukasi</span>
             </button>
         </nav>
     </div>
@@ -288,28 +291,32 @@
          ========================================== -->
     
     <!-- Modal Trade Detail -->
-    <div id="modal-trade" class="fixed inset-0 bg-slate-900 z-[100] overflow-y-auto hidden">
-        <div class="sticky top-0 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 p-4 flex items-center justify-between z-10">
-            <button onclick="app.closeModal('trade')" class="flex items-center gap-2 text-slate-400 hover:text-white px-2 py-1 bg-slate-800 rounded-lg">
-                <i data-lucide="arrow-left" class="w-[18px] h-[18px]"></i> <span class="text-sm font-medium">Kembali</span>
-            </button>
-            <button id="modal-trade-delete" class="text-rose-400 bg-rose-500/10 p-2 rounded-lg hover:bg-rose-500/20"><i data-lucide="trash-2" class="w-[18px] h-[18px]"></i></button>
-        </div>
-        <div id="modal-trade-content" class="p-4 md:p-8 max-w-3xl mx-auto space-y-6 pb-24">
-            <!-- Content Injected via JS -->
+    <div id="modal-trade" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] overflow-y-auto hidden">
+        <div class="min-h-screen bg-white md:w-full md:max-w-4xl md:mx-auto md:my-8 md:rounded-2xl md:min-h-fit md:shadow-2xl overflow-hidden shadow-xl animate-in slide-in-from-bottom-8 duration-300">
+            <div class="sticky top-0 bg-white/90 backdrop-blur-md border-b border-slate-200 p-4 flex items-center justify-between z-10">
+                <button onclick="app.closeModal('trade')" class="flex items-center gap-2 text-slate-600 hover:text-slate-900 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> <span class="text-sm font-bold">Kembali</span>
+                </button>
+                <button id="modal-trade-delete" class="text-rose-600 bg-rose-50 p-2 rounded-lg hover:bg-rose-100 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            </div>
+            <div id="modal-trade-content" class="p-5 md:p-8 space-y-6 pb-24 md:pb-8 text-slate-800">
+                <!-- Content Injected via JS -->
+            </div>
         </div>
     </div>
 
     <!-- Modal Learning Detail -->
-    <div id="modal-learning" class="fixed inset-0 bg-slate-900 z-[100] overflow-y-auto hidden">
-        <div class="sticky top-0 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 p-4 flex items-center justify-between z-10">
-            <button onclick="app.closeModal('learning')" class="flex items-center gap-2 text-slate-400 hover:text-white px-2 py-1 bg-slate-800 rounded-lg">
-                <i data-lucide="arrow-left" class="w-[18px] h-[18px]"></i> <span class="text-sm font-medium">Kembali</span>
-            </button>
-            <button id="modal-learning-delete" class="text-rose-400 bg-rose-500/10 p-2 rounded-lg hover:bg-rose-500/20"><i data-lucide="trash-2" class="w-[18px] h-[18px]"></i></button>
-        </div>
-        <div id="modal-learning-content" class="p-4 md:p-8 max-w-3xl mx-auto space-y-6 pb-24">
-             <!-- Content Injected via JS -->
+    <div id="modal-learning" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] overflow-y-auto hidden">
+        <div class="min-h-screen bg-white md:w-full md:max-w-4xl md:mx-auto md:my-8 md:rounded-2xl md:min-h-fit md:shadow-2xl overflow-hidden shadow-xl animate-in slide-in-from-bottom-8 duration-300">
+            <div class="sticky top-0 bg-white/90 backdrop-blur-md border-b border-slate-200 p-4 flex items-center justify-between z-10">
+                <button onclick="app.closeModal('learning')" class="flex items-center gap-2 text-slate-600 hover:text-slate-900 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> <span class="text-sm font-bold">Kembali</span>
+                </button>
+                <button id="modal-learning-delete" class="text-rose-600 bg-rose-50 p-2 rounded-lg hover:bg-rose-100 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            </div>
+            <div id="modal-learning-content" class="p-5 md:p-8 space-y-6 pb-24 md:pb-8 text-slate-800">
+                 <!-- Content Injected via JS -->
+            </div>
         </div>
     </div>
 
@@ -336,15 +343,11 @@
                 trades: [],
                 learnings: [],
                 filterMonth: new Date().toISOString().slice(0, 7),
-                
-                // Temporary states for forms
                 newTradeImages: [],
                 newLearningImages: []
             },
 
-            // Initialization
             init() {
-                // Set default dates
                 document.getElementById('trade-date').value = new Date().toISOString().split('T')[0];
                 document.getElementById('filter-month').value = this.state.filterMonth;
 
@@ -352,32 +355,28 @@
                 this.renderAll();
                 this.setupEventListeners();
                 
-                // Hook print event
                 window.addEventListener('beforeprint', () => this.generatePrintView());
             },
 
-            // Navigation
             switchTab(tabId) {
                 this.state.activeTab = tabId;
                 
-                // Hide all tabs
                 document.querySelectorAll('[id^="tab-"]').forEach(el => {
                     el.classList.remove('block');
                     el.classList.add('hidden');
                 });
                 
-                // Show active tab
                 document.getElementById(`tab-${tabId}`).classList.remove('hidden');
                 document.getElementById(`tab-${tabId}`).classList.add('block');
 
-                // Update Desktop Nav Styling
+                // Update Desktop Nav Styling (Light Theme colors)
                 const dtTabs = ['dashboard', 'journal', 'learning'];
                 dtTabs.forEach(t => {
                     const btn = document.getElementById(`nav-desktop-${t}`);
                     if (t === tabId) {
-                        btn.className = "px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 bg-blue-600 text-white shadow-sm";
+                        btn.className = "px-4 py-2 rounded-md text-sm font-bold transition-all flex items-center gap-2 bg-emerald-500 text-white shadow-sm";
                     } else {
-                        btn.className = "px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700";
+                        btn.className = "px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100";
                     }
                 });
 
@@ -385,14 +384,13 @@
                 dtTabs.forEach(t => {
                     const btn = document.getElementById(`nav-mobile-${t}`);
                     if (t === tabId) {
-                        btn.className = "flex flex-col items-center justify-center w-full py-3 text-blue-500";
+                        btn.className = "flex flex-col items-center justify-center w-full py-3 text-emerald-600 transition-colors";
                     } else {
-                        btn.className = "flex flex-col items-center justify-center w-full py-3 text-slate-500 hover:text-slate-400";
+                        btn.className = "flex flex-col items-center justify-center w-full py-3 text-slate-400 hover:text-emerald-600 transition-colors";
                     }
                 });
             },
 
-            // Clocks
             startClocks() {
                 const render = () => {
                     const time = new Date();
@@ -412,12 +410,12 @@
                         const timeStr = time.toLocaleTimeString('id-ID', { timeZone: market.tz, hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
                         html += `
-                            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col items-center justify-center relative overflow-hidden group hover:border-blue-500/50 transition-colors">
-                                <div class="absolute top-0 w-full h-1 ${isMarketOpen ? 'bg-emerald-500' : 'bg-slate-600'}"></div>
+                            <div class="bg-white border border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center relative overflow-hidden group hover:border-emerald-300 transition-colors shadow-sm">
+                                <div class="absolute top-0 w-full h-1 ${isMarketOpen ? 'bg-emerald-500' : 'bg-slate-200'}"></div>
                                 <span class="text-2xl mb-2">${market.flag}</span>
-                                <h3 class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">${market.name}</h3>
-                                <p class="text-sm md:text-xl font-mono text-slate-100 tracking-tight">${timeStr}</p>
-                                <span class="text-[10px] mt-2 px-2 py-0.5 rounded-full ${isMarketOpen ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-700 text-slate-400'}">
+                                <h3 class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">${market.name}</h3>
+                                <p class="text-sm md:text-lg font-mono font-bold text-slate-800 tracking-tight">${timeStr}</p>
+                                <span class="text-[10px] mt-2 px-2 py-0.5 rounded-full font-bold ${isMarketOpen ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}">
                                     ${isMarketOpen ? 'OPEN' : 'CLOSED'}
                                 </span>
                             </div>
@@ -429,7 +427,6 @@
                 setInterval(render, 1000);
             },
 
-            // Dashboard Capital Logic
             toggleEditCapital() {
                 document.getElementById('capital-display').classList.add('hidden');
                 document.getElementById('btn-edit-capital').classList.add('hidden');
@@ -448,9 +445,7 @@
                 this.renderDashboard();
             },
 
-            // Form Handlers
             setupEventListeners() {
-                // Submit Trade
                 document.getElementById('form-trade').addEventListener('submit', (e) => {
                     e.preventDefault();
                     const newTrade = {
@@ -467,8 +462,6 @@
                     };
                     
                     this.state.trades.unshift(newTrade);
-                    
-                    // Reset
                     e.target.reset();
                     document.getElementById('trade-date').value = new Date().toISOString().split('T')[0];
                     this.state.newTradeImages = [];
@@ -476,7 +469,6 @@
                     this.renderAll();
                 });
 
-                // Submit Learning
                 document.getElementById('form-learning').addEventListener('submit', (e) => {
                     e.preventDefault();
                     const newLearning = {
@@ -487,8 +479,6 @@
                     };
                     
                     this.state.learnings.unshift(newLearning);
-                    
-                    // Reset
                     e.target.reset();
                     this.state.newLearningImages = [];
                     this.renderImagePreviews('learning');
@@ -496,7 +486,6 @@
                 });
             },
 
-            // Image Handlers
             handleImageUpload(e, type) {
                 const files = Array.from(e.target.files);
                 if (files.length === 0) return;
@@ -513,7 +502,6 @@
                     };
                     reader.readAsDataURL(file);
                 });
-                // Reset input file value so you can select the same file again if needed
                 e.target.value = ''; 
             },
 
@@ -533,10 +521,10 @@
                 let html = '';
                 images.forEach((img, idx) => {
                     html += `
-                        <div class="relative w-12 h-12 rounded-md overflow-hidden border border-slate-600 group flex-shrink-0">
+                        <div class="relative w-12 h-12 rounded-md overflow-hidden border border-slate-200 group flex-shrink-0 shadow-sm">
                             <img src="${img}" class="w-full h-full object-cover" />
                             <button type="button" onclick="app.removeImagePreview(${idx}, '${type}')" class="absolute inset-0 bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
+                                <i data-lucide="x-circle" class="w-4 h-4"></i>
                             </button>
                         </div>
                     `;
@@ -545,13 +533,11 @@
                 lucide.createIcons();
             },
 
-            // Month Filter
             updateFilterMonth(e) {
                 this.state.filterMonth = e.target.value;
                 this.renderJournal();
             },
 
-            // Rendering Logic
             renderAll() {
                 this.renderDashboard();
                 this.renderJournal();
@@ -568,15 +554,15 @@
                 
                 const cbEl = document.getElementById('current-balance');
                 cbEl.innerText = `$${currentBalance.toFixed(2)}`;
-                cbEl.className = `text-4xl font-bold tracking-tight ${currentBalance >= this.state.initialCapital ? 'text-blue-400' : 'text-rose-400'}`;
+                cbEl.className = `text-4xl font-bold tracking-tight ${currentBalance >= this.state.initialCapital ? 'text-emerald-600' : 'text-rose-600'}`;
 
                 const pnlEl = document.getElementById('net-pnl');
                 pnlEl.innerText = `${totalPnL >= 0 ? '+' : '-'}$${Math.abs(totalPnL).toFixed(2)}`;
-                pnlEl.className = `text-3xl font-bold tracking-tight ${totalPnL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+                pnlEl.className = `text-3xl font-bold tracking-tight ${totalPnL >= 0 ? 'text-emerald-600' : 'text-rose-600'}`;
 
                 document.getElementById('pnl-icon').innerHTML = totalPnL >= 0 
-                    ? `<i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>` 
-                    : `<i data-lucide="trending-down" class="w-4 h-4 text-rose-400"></i>`;
+                    ? `<i data-lucide="trending-up" class="w-4 h-4 text-emerald-500"></i>` 
+                    : `<i data-lucide="trending-down" class="w-4 h-4 text-rose-500"></i>`;
                 
                 document.getElementById('total-trades-count').innerText = this.state.trades.length;
 
@@ -591,38 +577,36 @@
                 const filteredTrades = this.state.trades.filter(t => t.date.startsWith(this.state.filterMonth));
                 const monthlyPnL = filteredTrades.reduce((acc, curr) => acc + curr.pnl, 0);
 
-                // Update Monthly PnL UI
                 const pnlEl = document.getElementById('monthly-pnl');
                 pnlEl.innerText = `${monthlyPnL >= 0 ? '+' : '-'}$${Math.abs(monthlyPnL).toFixed(2)}`;
-                pnlEl.className = `font-mono text-sm font-bold ${monthlyPnL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+                pnlEl.className = `font-mono text-sm font-bold ${monthlyPnL >= 0 ? 'text-emerald-600' : 'text-rose-600'}`;
 
-                // Update List
                 const listEl = document.getElementById('trades-list');
                 if (filteredTrades.length === 0) {
-                    listEl.innerHTML = `<div class="bg-slate-800 border border-slate-700 rounded-xl p-6 text-center text-slate-500 text-sm">Tidak ada transaksi bulan ini.</div>`;
+                    listEl.innerHTML = `<div class="bg-white border border-slate-200 rounded-xl p-8 text-center text-slate-400 text-sm shadow-sm font-medium">Tidak ada transaksi bulan ini.</div>`;
                 } else {
                     let html = '';
                     filteredTrades.forEach(trade => {
                         const isProfit = trade.pnl >= 0;
                         html += `
-                            <div onclick="app.openModal('trade', ${trade.id})" class="bg-slate-800 border border-slate-700 rounded-xl p-3 flex justify-between items-center hover:bg-slate-700/50 transition-colors group cursor-pointer">
+                            <div onclick="app.openModal('trade', ${trade.id})" class="bg-white border border-slate-200 rounded-xl p-3 flex justify-between items-center hover:bg-slate-50 transition-colors group cursor-pointer shadow-sm">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-1 h-10 rounded-full ${isProfit ? 'bg-emerald-500' : 'bg-rose-500'}"></div>
+                                    <div class="w-1.5 h-10 rounded-full ${isProfit ? 'bg-emerald-500' : 'bg-rose-500'}"></div>
                                     <div>
                                         <div class="flex items-center gap-2">
-                                            <h3 class="font-bold text-white">${trade.asset}</h3>
-                                            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${trade.type === 'Long' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">${trade.type}</span>
+                                            <h3 class="font-bold text-slate-800">${trade.asset}</h3>
+                                            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${trade.type === 'Long' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${trade.type}</span>
                                         </div>
-                                        <span class="text-[11px] text-slate-400 flex items-center gap-1"><i data-lucide="clock" class="w-2.5 h-2.5"></i> ${trade.date}</span>
+                                        <span class="text-[11px] text-slate-500 font-medium flex items-center gap-1 mt-0.5"><i data-lucide="clock" class="w-3 h-3"></i> ${trade.date}</span>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-4">
                                     <div class="text-right">
-                                        <p class="font-mono font-bold ${isProfit ? 'text-emerald-400' : 'text-rose-400'}">
+                                        <p class="font-mono font-bold text-lg ${isProfit ? 'text-emerald-600' : 'text-rose-600'}">
                                             ${isProfit ? '+' : '-'}$${Math.abs(trade.pnl).toFixed(2)}
                                         </p>
                                     </div>
-                                    <button class="text-slate-500 group-hover:text-blue-400 bg-slate-900 p-1.5 rounded-lg transition-colors">
+                                    <button class="text-slate-400 group-hover:text-emerald-600 bg-slate-50 p-2 rounded-lg transition-colors border border-slate-100 group-hover:border-emerald-100">
                                         <i data-lucide="chevron-right" class="w-[18px] h-[18px]"></i>
                                     </button>
                                 </div>
@@ -637,23 +621,23 @@
             renderLearnings() {
                 const listEl = document.getElementById('learnings-list');
                 if (this.state.learnings.length === 0) {
-                    listEl.innerHTML = `<div class="col-span-full p-6 text-center text-slate-500 bg-slate-800 rounded-xl border border-slate-700 text-sm">Belum ada catatan pembelajaran.</div>`;
+                    listEl.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400 bg-white rounded-xl border border-slate-200 text-sm shadow-sm font-medium">Belum ada catatan pembelajaran.</div>`;
                 } else {
                     let html = '';
                     this.state.learnings.forEach(item => {
                         const hasImages = item.images && item.images.length > 0;
                         html += `
-                            <div onclick="app.openModal('learning', ${item.id})" class="bg-slate-800 border border-slate-700 p-4 rounded-xl flex justify-between items-center hover:border-purple-500/50 transition-colors cursor-pointer group">
+                            <div onclick="app.openModal('learning', ${item.id})" class="bg-white border border-slate-200 p-4 rounded-xl flex justify-between items-center hover:border-emerald-300 transition-colors cursor-pointer group shadow-sm">
                                 <div class="flex items-center gap-3 overflow-hidden">
-                                    <div class="w-2 h-2 rounded-full bg-purple-500 flex-shrink-0"></div>
+                                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 flex-shrink-0"></div>
                                     <div class="overflow-hidden">
-                                        <h3 class="font-bold text-white text-sm truncate">${item.term}</h3>
-                                        <p class="text-xs text-slate-400 truncate mt-0.5">${item.definition}</p>
+                                        <h3 class="font-bold text-slate-800 text-sm truncate">${item.term}</h3>
+                                        <p class="text-xs text-slate-500 font-medium truncate mt-0.5">${item.definition}</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2 pl-2">
-                                    ${hasImages ? `<i data-lucide="image" class="w-3.5 h-3.5 text-slate-500"></i>` : ''}
-                                    <button class="text-slate-500 group-hover:text-purple-400 bg-slate-900 p-1.5 rounded-lg transition-colors flex-shrink-0">
+                                    ${hasImages ? `<i data-lucide="image" class="w-4 h-4 text-slate-400"></i>` : ''}
+                                    <button class="text-slate-400 group-hover:text-emerald-600 bg-slate-50 p-1.5 rounded-lg transition-colors flex-shrink-0 border border-transparent group-hover:border-emerald-100">
                                         <i data-lucide="chevron-right" class="w-4 h-4"></i>
                                     </button>
                                 </div>
@@ -665,7 +649,6 @@
                 lucide.createIcons();
             },
 
-            // Modal Handlers
             openModal(type, id) {
                 if (type === 'trade') {
                     const trade = this.state.trades.find(t => t.id === id);
@@ -676,10 +659,10 @@
                     
                     let imagesHtml = '';
                     if (trade.images && trade.images.length > 0) {
-                        const imgs = trade.images.map(img => `<img src="${img}" class="w-full h-auto rounded-xl border border-slate-700 shadow-lg" onclick="window.open('${img}')" />`).join('');
+                        const imgs = trade.images.map(img => `<img src="${img}" class="w-full h-auto rounded-xl border border-slate-200 shadow-md" onclick="window.open('${img}')" />`).join('');
                         imagesHtml = `
                             <div>
-                                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2"><i data-lucide="image" class="w-3.5 h-3.5"></i> Bukti Chart (${trade.images.length})</h3>
+                                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2"><i data-lucide="image" class="w-4 h-4 text-slate-500"></i> Bukti Chart (${trade.images.length})</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${imgs}</div>
                             </div>
                         `;
@@ -687,45 +670,45 @@
 
                     document.getElementById('modal-trade-content').innerHTML = `
                         <div class="flex flex-col items-center text-center space-y-2 mb-8 animate-in fade-in slide-in-from-bottom-4">
-                            <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${trade.type === 'Long' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${trade.type === 'Long' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
                                 ${trade.type} POSITION
                             </span>
-                            <h1 class="text-4xl md:text-5xl font-black text-white">${trade.asset}</h1>
-                            <p class="text-slate-400 flex items-center justify-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> ${trade.date}</p>
+                            <h1 class="text-4xl md:text-5xl font-black text-slate-800 tracking-tight">${trade.asset}</h1>
+                            <p class="text-slate-500 font-medium flex items-center justify-center gap-1.5"><i data-lucide="clock" class="w-4 h-4"></i> ${trade.date}</p>
                             
-                            <div class="mt-4 p-6 bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-sm mx-auto shadow-2xl">
-                                <p class="text-sm text-slate-400 mb-1">Realized Profit / Loss</p>
-                                <p class="text-5xl font-mono font-black tracking-tight ${isProfit ? 'text-emerald-400' : 'text-rose-400'}">
+                            <div class="mt-4 p-6 bg-slate-50 border border-slate-200 rounded-2xl w-full max-w-sm mx-auto shadow-sm">
+                                <p class="text-sm font-bold text-slate-500 mb-1">Realized Profit / Loss</p>
+                                <p class="text-5xl font-mono font-black tracking-tight ${isProfit ? 'text-emerald-600' : 'text-rose-600'}">
                                     ${isProfit ? '+' : '-'}$${Math.abs(trade.pnl).toFixed(2)}
                                 </p>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-slate-800/50 border border-slate-700/50 p-4 rounded-xl flex flex-col items-center">
-                                <i data-lucide="target" class="w-5 h-5 text-blue-400 mb-2"></i>
-                                <span class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Take Profit</span>
-                                <span class="font-mono text-white">${trade.tp || '-'}</span>
+                            <div class="bg-blue-50/50 border border-blue-100 p-4 rounded-xl flex flex-col items-center shadow-sm">
+                                <i data-lucide="target" class="w-5 h-5 text-blue-500 mb-2"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Take Profit</span>
+                                <span class="font-mono font-bold text-slate-800">${trade.tp || '-'}</span>
                             </div>
-                            <div class="bg-slate-800/50 border border-slate-700/50 p-4 rounded-xl flex flex-col items-center">
-                                <i data-lucide="shield-alert" class="w-5 h-5 text-rose-400 mb-2"></i>
-                                <span class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Stop Loss</span>
-                                <span class="font-mono text-white">${trade.sl || '-'}</span>
+                            <div class="bg-rose-50/50 border border-rose-100 p-4 rounded-xl flex flex-col items-center shadow-sm">
+                                <i data-lucide="shield-alert" class="w-5 h-5 text-rose-500 mb-2"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Stop Loss</span>
+                                <span class="font-mono font-bold text-slate-800">${trade.sl || '-'}</span>
                             </div>
                         </div>
 
                         <div class="space-y-4">
-                            <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 relative">
-                                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500 rounded-l-2xl"></div>
-                                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 pl-2">Catatan Analisa / Entry</h3>
-                                <p class="text-slate-200 leading-relaxed pl-2">${trade.notes || 'Tidak ada catatan untuk transaksi ini.'}</p>
+                            <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 relative shadow-sm">
+                                <div class="absolute top-0 left-0 w-1.5 h-full bg-slate-800 rounded-l-2xl"></div>
+                                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 pl-3">Catatan Analisa / Entry</h3>
+                                <p class="text-slate-700 leading-relaxed pl-3 font-medium">${trade.notes || 'Tidak ada catatan.'}</p>
                             </div>
 
                             ${trade.learning ? `
-                                <div class="bg-yellow-500/10 rounded-2xl p-5 border border-yellow-500/20 relative">
-                                    <div class="absolute top-0 left-0 w-1 h-full bg-yellow-400 rounded-l-2xl"></div>
-                                    <h3 class="text-xs font-bold text-yellow-500/80 uppercase tracking-wider mb-2 flex items-center gap-1 pl-2"><i data-lucide="lightbulb" class="w-3 h-3"></i> Pembelajaran Didapat</h3>
-                                    <p class="text-yellow-100/90 leading-relaxed pl-2 font-medium">${trade.learning}</p>
+                                <div class="bg-amber-50 rounded-2xl p-5 border border-amber-200 relative shadow-sm">
+                                    <div class="absolute top-0 left-0 w-1.5 h-full bg-amber-400 rounded-l-2xl"></div>
+                                    <h3 class="text-xs font-bold text-amber-600 uppercase tracking-wider mb-2 flex items-center gap-1.5 pl-3"><i data-lucide="lightbulb" class="w-3.5 h-3.5"></i> Pembelajaran Didapat</h3>
+                                    <p class="text-amber-900 leading-relaxed pl-3 font-medium">${trade.learning}</p>
                                 </div>
                             ` : ''}
                         </div>
@@ -741,23 +724,23 @@
 
                     let imagesHtml = '';
                     if (learning.images && learning.images.length > 0) {
-                        const imgs = learning.images.map(img => `<img src="${img}" class="w-full h-auto rounded-xl border border-slate-700 shadow-lg" onclick="window.open('${img}')" />`).join('');
+                        const imgs = learning.images.map(img => `<img src="${img}" class="w-full h-auto rounded-xl border border-slate-200 shadow-md" onclick="window.open('${img}')" />`).join('');
                         imagesHtml = `
-                            <div>
-                                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2"><i data-lucide="image" class="w-3.5 h-3.5"></i> Gambar Referensi</h3>
+                            <div class="mt-8">
+                                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2"><i data-lucide="image" class="w-4 h-4 text-slate-500"></i> Gambar Referensi</h3>
                                 <div class="grid grid-cols-1 gap-4">${imgs}</div>
                             </div>
                         `;
                     }
 
                     document.getElementById('modal-learning-content').innerHTML = `
-                        <div class="mb-8 animate-in fade-in slide-in-from-bottom-4">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="w-3 h-3 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]"></div>
-                                <h1 class="text-3xl md:text-4xl font-black text-white">${learning.term}</h1>
+                        <div class="mb-4 animate-in fade-in slide-in-from-bottom-4">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)]"></div>
+                                <h1 class="text-3xl md:text-4xl font-black text-slate-800 tracking-tight">${learning.term}</h1>
                             </div>
-                            <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700/50 shadow-xl">
-                                <p class="text-slate-300 text-lg leading-relaxed">${learning.definition}</p>
+                            <div class="bg-emerald-50/50 rounded-2xl p-6 border border-emerald-100 shadow-sm">
+                                <p class="text-slate-700 text-lg leading-relaxed font-medium">${learning.definition}</p>
                             </div>
                         </div>
                         ${imagesHtml}
@@ -766,7 +749,7 @@
                 }
                 
                 lucide.createIcons();
-                document.body.style.overflow = 'hidden'; // prevent background scrolling
+                document.body.style.overflow = 'hidden';
             },
 
             closeModal(type) {
@@ -786,7 +769,6 @@
                 }
             },
 
-            // Generate Print HTML (Dipanggil otomatis saat tekan tombol PDF)
             generatePrintView() {
                 const filteredTrades = this.state.trades.filter(t => t.date.startsWith(this.state.filterMonth));
                 const monthlyPnL = filteredTrades.reduce((acc, curr) => acc + curr.pnl, 0);
@@ -796,7 +778,7 @@
                     tradesHtml = `<p class="text-center text-gray-500 my-10">Tidak ada transaksi yang tercatat pada bulan ini.</p>`;
                 } else {
                     filteredTrades.forEach((trade, index) => {
-                        let imgsHtml = '<p class="text-gray-400 text-sm italic">Tidak ada screenshot dilampirkan.</p>';
+                        let imgsHtml = '<p class="text-gray-400 text-sm italic">Tidak ada screenshot.</p>';
                         if (trade.images && trade.images.length > 0) {
                             imgsHtml = `<div class="flex flex-wrap gap-2">` + 
                                 trade.images.map(img => `<img src="${img}" class="max-w-full h-auto max-h-48 border border-gray-300 rounded object-contain shadow-sm" />`).join('') +
@@ -846,17 +828,17 @@
 
                 document.getElementById('print-view').innerHTML = `
                     <div class="border-b-2 border-black pb-4 mb-6">
-                        <h1 class="text-3xl font-bold">Laporan Jurnal Trading - Jurnal Danras</h1>
+                        <h1 class="text-3xl font-bold text-green-700">Laporan Jurnal Trading</h1>
                         <p class="text-gray-600 text-lg mt-1">Periode: ${this.state.filterMonth}</p>
                     </div>
 
                     <div class="flex justify-between mb-8 bg-gray-100 p-4 rounded-lg">
                         <div>
-                            <p class="text-sm text-gray-600">Total Transaksi Bulan Ini</p>
+                            <p class="text-sm text-gray-600 font-bold">Total Transaksi</p>
                             <p class="text-xl font-bold">${filteredTrades.length} Trade</p>
                         </div>
                         <div class="text-right">
-                            <p class="text-sm text-gray-600">Net PnL Bulan Ini</p>
+                            <p class="text-sm text-gray-600 font-bold">Net PnL</p>
                             <p class="text-2xl font-bold ${monthlyPnL >= 0 ? 'text-green-600' : 'text-red-600'}">
                                 ${monthlyPnL >= 0 ? '+' : '-'}$${Math.abs(monthlyPnL).toFixed(2)}
                             </p>
@@ -866,15 +848,10 @@
                     <div class="space-y-8">
                         ${tradesHtml}
                     </div>
-
-                    <div class="mt-12 text-center text-sm text-gray-400 border-t border-gray-200 pt-4">
-                        Dicetak dari Aplikasi Jurnal Danras pada ${new Date().toLocaleDateString('id-ID')}
-                    </div>
                 `;
             }
         };
 
-        // Initialize App on Load
         document.addEventListener('DOMContentLoaded', () => {
             app.init();
         });
