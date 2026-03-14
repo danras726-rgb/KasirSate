@@ -1,988 +1,884 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-  <title>Kasir CAKSABAR</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <style>
-    :root{--muted:#64748b;--accent:#0891b2;--accent-dark:#0e7490;--bg:#f1f5f9;--card:#ffffff;--red:#ef4444;--orange:#f59e0b;--green:#10b981}
-    *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,sans-serif}
-    body{margin:0;background:var(--bg);color:#0f172a;padding:12px;padding-bottom:80px; -webkit-font-smoothing: antialiased;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jurnal Danras</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     
-    /* === LAYOUT RESPONSIVE SYSTEM === */
-    .app { max-width: 100%; margin: 0 auto; }
-
-    .layout-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    @media (min-width: 900px) {
-      .app { max-width: 1280px; padding: 20px; }
-      
-      .layout-grid {
-        display: grid;
-        grid-template-columns: 1fr 400px;
-        gap: 32px;
-        align-items: start;
-      }
-
-      .sidebar-column {
-        position: sticky;
-        top: 20px;
-        height: fit-content;
-      }
-      
-      .menu-grid {
-        grid-template-columns: repeat(3, 1fr) !important;
-      }
-
-      body { padding-bottom: 40px; }
-    }
-    
-    @media (min-width: 600px) and (max-width: 899px) {
-      .app { max-width: 768px; }
-      .menu-grid { grid-template-columns: repeat(3, 1fr) !important; }
-    }
-
-    /* === HEADER === */
-    header { margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; background: var(--card); padding: 16px 20px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-    h1 { font-size: 20px; margin: 0; color: var(--accent); font-weight: 800; letter-spacing: -0.5px; }
-    @media(min-width: 600px) { h1 { font-size: 24px; } }
-    .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-    
-    .header-btn { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 8px 12px; font-size: 18px; cursor: pointer; transition: 0.2s; color: #334155; }
-    .header-btn:hover { background: #e2e8f0; color: var(--accent); transform: translateY(-1px); }
-
-    /* === COMPONENTS === */
-    .card-box { background: var(--card); padding: 20px; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 24px; }
-
-    /* Stats */
-    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 0; }
-    .stat-card { background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; }
-    .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-    .stat-val { font-size: 20px; font-weight: 800; margin-top: 6px; color: #0f172a; }
-
-    /* AI Input */
-    .ai-section { background: linear-gradient(to bottom right, #ffffff, #f0f9ff); border-color: #bae6fd; }
-    .ai-box { width: 100%; border: 2px solid #e2e8f0; border-radius: 12px; padding: 12px; font-size: 15px; margin-top: 12px; transition: 0.2s; resize: none; font-family: inherit; line-height: 1.5; }
-    .ai-box:focus { border-color: var(--accent); outline: none; background: white; box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.1); }
-    .ai-hint { font-size: 12px; color: var(--muted); margin-top: 12px; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 8px; line-height: 1.6; border: 1px solid #e2e8f0; }
-    .code-tag { font-family: 'Courier New', monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: 700; color: #0f172a; font-size: 11px; border: 1px solid #cbd5e1; }
-
-    /* Menu Grid */
-    .section-title { font-weight: 800; margin: 0 0 16px; display: flex; justify-content: space-between; align-items: center; font-size: 18px; color: #1e293b; border-left: 4px solid var(--accent); padding-left: 12px; }
-    .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .menu-item { background: var(--card); border: 1px solid #e2e8f0; border-radius: 14px; padding: 16px; position: relative; transition: all 0.2s; user-select: none; box-shadow: 0 1px 2px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; height: 100%; min-height: 110px; }
-    .menu-item:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px -2px rgba(8, 145, 178, 0.15); }
-    .m-name { font-weight: 600; font-size: 15px; line-height: 1.4; margin-bottom: 8px; color: #334155; }
-    
-    /* Layout Baru Menu Item (Harga di kiri, Tombol di Kanan) */
-    .menu-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 8px; }
-    .m-price { font-size: 14px; color: var(--accent); font-weight: 700; }
-    
-    /* Tombol Tambah Sederhana */
-    .add-btn-simple {
-        background: var(--accent);
-        color: white;
-        border-radius: 8px;
-        padding: 6px 12px;
-        font-size: 12px;
-        font-weight: 700;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        border: none;
-        transition: 0.2s;
-    }
-    .add-btn-simple:active { transform: scale(0.95); background: var(--accent-dark); }
-
-    /* Kontrol Plus Minus */
-    .qty-controls {
-      display: flex;
-      align-items: center;
-      background: #f1f5f9;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid #e2e8f0;
-      height: 30px;
-    }
-    .qty-btn {
-      width: 28px;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fff;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 16px;
-      transition: 0.2s;
-      padding: 0;
-    }
-    .qty-btn:active { background: #e2e8f0; }
-    .qty-btn.minus { color: var(--red); border-right: 1px solid #e2e8f0; }
-    .qty-btn.plus { color: var(--green); border-left: 1px solid #e2e8f0; }
-    .qty-val {
-      padding: 0 8px;
-      font-size: 13px;
-      font-weight: 700;
-      min-width: 24px;
-      text-align: center;
-      color: #0f172a;
-    }
-
-    /* Cart */
-    .cart-wrapper { background: var(--card); border-radius: 20px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-    .cart-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed #cbd5e1; font-size: 14px; align-items: center; }
-    .cart-row:last-child { border-bottom: none; }
-    .c-name { flex: 1; font-weight: 600; color: #334155; }
-    .c-qty { color: var(--muted); margin-right: 12px; font-weight: 700; background: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-size: 12px; border: 1px solid #e2e8f0; }
-    
-    .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; background: var(--accent); color: white; font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 12px; box-shadow: 0 4px 6px -1px rgba(8,145,178,0.3); transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .btn:hover { background: var(--accent-dark); }
-    .btn:active { transform: translateY(1px); box-shadow: none; }
-    .btn.secondary { background: #f1f5f9; color: #475569; box-shadow: none; border: 1px solid #cbd5e1; }
-    .btn.secondary:hover { background: #e2e8f0; }
-    .btn.danger { background: #fee2e2; color: #991b1b; box-shadow: none; border: 1px solid #fca5a5; }
-
-    /* Table Input in Cart */
-    .table-input-row { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; background: #f8fafc; padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0; }
-    .table-input-field { width: 80px; padding: 8px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700; text-align: center; font-size: 16px; color: var(--accent); }
-    .table-input-field:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1); }
-
-    /* Transaction History Table */
-    .history-section { margin-top: 0; } /* Reset margin for grid layout */
-    .table-container { background: #fff; border-radius: 16px; padding: 0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th { text-align: left; color: var(--muted); padding: 14px 16px; font-weight: 700; border-bottom: 2px solid #e2e8f0; background: #f8fafc; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-    td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #f8fafc; }
-    
-    /* Tombol Aksi di Tabel */
-    .action-btn { border: none; background: none; cursor: pointer; padding: 6px; border-radius: 6px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; }
-    .action-btn.edit { color: var(--orange); background: #fff7ed; border: 1px solid #ffedd5; margin-right: 6px; }
-    .action-btn.edit:hover { background: #ffedd5; }
-    .action-btn.del { color: var(--red); background: #fef2f2; border: 1px solid #fee2e2; }
-    .action-btn.del:hover { background: #fee2e2; }
-
-    /* Modal Styles */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); display: none; align-items: center; justify-content: center; z-index: 999; backdrop-filter: blur(4px); padding: 20px; }
-    .modal-card { background: white; width: 100%; max-width: 380px; padding: 24px; border-radius: 24px; animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
-    @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    input.money { width: 100%; padding: 16px; font-size: 24px; text-align: center; border: 2px solid #e2e8f0; border-radius: 12px; margin-bottom: 16px; font-weight: 700; color: #0f172a; letter-spacing: 1px; }
-    input.money:focus { border-color: var(--accent); outline: none; }
-
-    /* Full Page Report */
-    #reportPage { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 2000; display: none; flex-direction: column; overflow-y: auto; padding: 0; }
-    .report-header { background: white; padding: 16px 20px; position: sticky; top: 0; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); z-index: 10; max-width: 100%; }
-    .report-container { padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; }
-    .report-back-btn { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 50%; width: 40px; height: 40px; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #334155; transition: 0.2s; }
-    .report-back-btn:hover { background: #e2e8f0; color: var(--accent); }
-
-    /* Report Table Specific */
-    .report-row td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid #f1f5f9; }
-    .report-qty { font-weight: 700; color: var(--accent); font-size: 16px; }
-    .report-group-header { background: #f8fafc; font-weight: 800; color: #334155; padding: 12px 16px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; border-top: 2px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
-    .slide-up { animation: slideUp 0.3s ease-out forwards; }
-    @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-    /* PRINT STYLES */
-    @media print {
-      body * { visibility: hidden; }
-      #receipt-area, #receipt-area * { visibility: visible; }
-      #receipt-area { position: absolute; left: 0; top: 0; width: 100%; display: block !important; background: white; padding: 0; color: black; }
-      #paymentModal, .app, #splash-screen { display: none !important; }
-    }
-    #receipt-area { display: none; font-family: 'Courier New', Courier, monospace; max-width: 300px; margin: 0 auto; }
-    .receipt-header { text-align: center; margin-bottom: 20px; border-bottom: 1px dashed #000; padding-bottom: 10px; }
-    .receipt-title { font-size: 18px; font-weight: bold; margin: 0; }
-    .receipt-info { font-size: 12px; margin-bottom: 4px; }
-    .receipt-item { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
-    .receipt-divider { border-top: 1px dashed #000; margin: 10px 0; }
-    .receipt-total { display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; margin: 4px 0; }
-    .receipt-footer { text-align: center; margin-top: 20px; font-size: 10px; }
-    
-    /* === SPLASH SCREEN (Keep Existing) === */
-    #splash-screen { position: fixed; inset: 0; background: #ffffff; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.6s ease-out, visibility 0.6s; }
-    .splash-logo-container { width: 100px; height: 100px; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); border-radius: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 25px -5px rgba(8, 145, 178, 0.3); margin-bottom: 24px; animation: bounceIn 1s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-    .splash-logo-img { width: 60px; height: 60px; object-fit: contain; filter: brightness(0) invert(1); }
-    .splash-text { font-size: 24px; font-weight: 800; color: #0f172a; text-align: center; opacity: 0; transform: translateY(20px); animation: fadeInUp 0.8s ease-out forwards 0.5s; padding: 0 20px; }
-    .splash-sub { font-size: 14px; color: var(--muted); margin-top: 8px; opacity: 0; animation: fadeInUp 0.8s ease-out forwards 0.8s; }
-    .hide-splash { opacity: 0 !important; visibility: hidden !important; pointer-events: none; }
-    @keyframes bounceIn { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
-    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-  </style>
-</head>
-<body>
-
-<div id="splash-screen">
-  <div class="splash-logo-container">
-    <img src="https://img.icons8.com/ios-filled/100/ffffff/cash-register.png" alt="Logo" class="splash-logo-img">
-  </div>
-  <div class="splash-text">Selamat datang di<br>Kasir CAKSABAR</div>
-  <div class="splash-sub">Memuat aplikasi...</div>
-</div>
-
-<div class="app">
-  <header>
-    <div style="display: flex; align-items: center; gap: 12px;">
-      <div style="width: 40px; height: 40px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-        <img src="https://img.icons8.com/ios-filled/50/ffffff/cash-register.png" alt="Logo" style="width: 24px; height: 24px;">
-      </div>
-      <div>
-        <h1>Kasir CAKSABAR</h1>
-        <div class="sub">Sistem Kasir Cerdas & Modern</div>
-      </div>
-    </div>
-    <button class="header-btn" onclick="showReport()" title="Laporan Penjualan">
-      📊
-    </button>
-  </header>
-
-  <div class="layout-grid">
-    <!-- LEFT COLUMN: MENU & AI -->
-    <div class="main-column">
-      
-      <div class="card-box ai-section">
-        <div style="font-weight:700;color:var(--accent);display:flex;align-items:center;gap:6px; margin-bottom: 8px;">
-          <span>✨ Pesan Cepat (AI)</span>
-        </div>
-        <textarea id="aiInput" class="ai-box" rows="2" placeholder="Ketik pesanan... Contoh: A 10, KT 5, Gule 10rb"></textarea>
-        <div class="ai-hint">
-          <strong>Kode Cepat:</strong><br>
-          <span class="code-tag">A</span> = Sate Ayam &bull; 
-          <span class="code-tag">K</span> = Sate Kambing<br>
-          <span class="code-tag">KT</span> = Kambing Tanpa Lemak &bull; 
-          <span class="code-tag">G</span> = Gule &bull; 
-          <span class="code-tag">N</span> = Nasi<br>
-          <span class="code-tag">rb</span> = 000 (Contoh: 15rb = 15.000)
-        </div>
-        <button class="btn" style="margin-top:12px;padding:12px; font-size: 14px;" onclick="parseAI()">Masukan ke Keranjang</button>
-      </div>
-
-      <div class="section-title">Makanan</div>
-      <div class="menu-grid" id="foodGrid"></div>
-
-      <div class="section-title" style="margin-top: 32px;">Minuman & Lainnya</div>
-      <div class="menu-grid" id="drinkGrid"></div>
-
-    </div>
-
-    <!-- RIGHT COLUMN: STATS, CART, HISTORY (Sticky on Desktop) -->
-    <div class="sidebar-column">
-      
-      <div class="card-box stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">Omset Hari Ini</div>
-          <div class="stat-val" id="omsetVal">Rp 0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Transaksi</div>
-          <div class="stat-val" id="trxVal">0</div>
-        </div>
-      </div>
-
-      <div class="cart-wrapper">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
-          <span style="font-weight:700;font-size:18px; color: #1e293b;">Keranjang</span>
-          <button onclick="resetCart()" style="background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;font-weight:600; padding: 4px 8px; border-radius: 6px; background: #fef2f2;">Hapus Semua</button>
-        </div>
-        
-        <div id="cartList" style="min-height: 100px;">
-            <div style="text-align:center;color:var(--muted);font-size:13px;padding:30px;border:2px dashed #e2e8f0;border-radius:12px">Belum ada item</div>
-        </div>
-        
-        <div class="table-input-row">
-          <span class="table-input-label">Nomor Meja:</span>
-          <input type="number" id="tableNum" class="table-input-field" placeholder="-" value="">
-        </div>
-
-        <div style="margin-top:20px; padding-top:16px; border-top:2px solid #f1f5f9;">
-          <div style="display:flex;justify-content:space-between;font-weight:800;font-size:20px; color: #0f172a; margin-bottom: 16px;">
-            <span>Total</span>
-            <span id="cartTotal">Rp 0</span>
-          </div>
-          <button class="btn" onclick="showCheckout()">Bayar / Checkout</button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- FULL WIDTH HISTORY SECTION (Below Grid on Desktop) -->
-  <div class="history-section" style="margin-top: 40px;">
-    <div class="section-title">
-      Riwayat Transaksi
-      <div style="display:flex;gap:8px">
-        <button onclick="resetHistory()" style="font-size:12px;padding:8px 12px;border-radius:8px;border:none;background:#fee2e2;color:#991b1b;cursor:pointer;font-weight:600; transition:0.2s;">Reset</button>
-        <button onclick="exportExcel()" style="font-size:12px;padding:8px 12px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;cursor:pointer;font-weight:600; color: #334155; transition:0.2s;">Export Excel</button>
-      </div>
-    </div>
-    <div class="table-container">
-      <div style="overflow-x: auto;">
-        <table id="historyTable"></table>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- MODAL PEMBAYARAN -->
-<div id="paymentModal" class="modal-overlay">
-  <div class="modal-card">
-    <h3 style="margin:0 0 4px;text-align:center;font-size:20px; color: #1e293b;">Pembayaran</h3>
-    
-    <div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:16px">Nominal Uang Diterima</div>
-    
-    <div class="total-display" id="modalTotal" style="font-size: 32px; margin-bottom: 20px;">Rp 0</div>
-    
-    <input type="number" id="paidInput" class="money" placeholder="0">
-    
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:20px;">
-        <button class="btn secondary" style="margin:0; padding:12px;" onclick="addNol('00')">+00</button>
-        <button class="btn secondary" style="margin:0; padding:12px;" onclick="addNol('000')">+000</button>
-    </div>
-    
-    <div style="display:flex;justify-content:space-between;margin-bottom:24px;font-weight:700;font-size:15px;background:#f8fafc;padding:16px;border-radius:12px; border: 1px solid #e2e8f0;">
-      <span style="color:var(--muted)">Kembalian:</span>
-      <span id="changeDisplay">Rp 0</span>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px; margin-bottom:12px">
-      <button class="btn secondary" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; font-size: 13px;" onclick="printReceipt()">🖨️ Print Struk</button>
-      <button class="btn" style="background: var(--green); box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);" onclick="processTransaction()">✅ Selesai</button>
-    </div>
-    
-    <button class="btn secondary" style="width:100%; margin-top: 0;" onclick="closeModal('paymentModal')">Batal</button>
-  </div>
-</div>
-
-<!-- HALAMAN FULL SCREEN LAPORAN -->
-<div id="reportPage" class="slide-up">
-  <div class="report-header">
-    <button class="report-back-btn" onclick="closeReport()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-    </button>
-    <div>
-      <h2 id="reportTitle" style="color: #1e293b;">Laporan Penjualan</h2>
-      <div style="font-size:13px;color:var(--muted)">Ringkasan item terjual</div>
-    </div>
-  </div>
-  
-  <div class="report-container">
-    <div id="reportContent" style="background:white; border-radius:16px; overflow: hidden; box-shadow:0 1px 3px rgba(0,0,0,0.05); border:1px solid #e2e8f0;"></div>
-    <button class="btn secondary" style="margin-top:24px" onclick="closeReport()">Kembali ke Kasir</button>
-  </div>
-</div>
-
-<!-- CONTAINER STRUK -->
-<div id="receipt-area"></div>
-
-<script>
-/**
- * DATA MENU & KONFIGURASI HARGA
- */
-const DATA_MENU = [
-  // SATE KAMBING
-  { id: 'sk_tusuk', keywords: ['sate kambing', 'kambing'], label: 'Sate Kambing (Tusuk)', price: 2400, category: 'food', visible: false },
-  { id: 'sk_porsi', keywords: ['sate kambing porsi'], label: 'Sate Kambing (Porsi)', price: 24000, category: 'food', visible: true },
-  
-  // SATE KAMBING POLOS
-  { id: 'sk_nl_tusuk', keywords: ['kambing tanpa lemak', 'no lemak', 'sk polos', 'kambing tl'], label: 'Sate Kambing TL (Tusuk)', price: 2600, category: 'food', visible: false },
-  { id: 'sk_nl_porsi', keywords: ['kambing tanpa lemak porsi'], label: 'Sate Kambing TL (Porsi)', price: 26000, category: 'food', visible: true },
-
-  // SATE AYAM
-  { id: 'sa_tusuk', keywords: ['sate ayam', 'ayam'], label: 'Sate Ayam (Tusuk)', price: 1200, category: 'food', visible: false },
-  { id: 'sa_porsi', keywords: ['sate ayam porsi'], label: 'Sate Ayam (Porsi)', price: 12000, category: 'food', visible: true },
-
-  // GULE
-  { id: 'gule', keywords: ['gule', 'gulai'], label: 'Gule (Porsi)', price: 24000, category: 'food', visible: true, isFlexible: true },
-  
-  // MAKANAN LAIN
-  { id: 'nasi_gule', keywords: ['nasi gule', 'nasi gulai'], label: 'Nasi Gule', price: 14000, category: 'food', visible: true },
-  { id: 'nasi', keywords: ['nasi', 'sego'], label: 'Nasi Putih', price: 3000, category: 'food', visible: true, isFlexible: true },
-  { id: 'kerupuk', keywords: ['kerupuk', 'rupuk'], label: 'Kerupuk', price: 1000, category: 'food', visible: true },
-
-  // MINUMAN
-  { id: 'es_teh', keywords: ['es teh'], label: 'Es Teh', price: 3000, category: 'drink', visible: true },
-  { id: 'es_jeruk', keywords: ['es jeruk'], label: 'Es Jeruk', price: 3000, category: 'drink', visible: true },
-  { id: 'teh_anget', keywords: ['teh anget', 'teh hangat'], label: 'Teh Anget', price: 3000, category: 'drink', visible: true },
-  { id: 'jeruk_anget', keywords: ['jeruk anget', 'jeruk hangat'], label: 'Jeruk Anget', price: 3000, category: 'drink', visible: true }
-];
-
-let cart = [];
-let transactions = JSON.parse(localStorage.getItem('trx_cak_sabar') || '[]');
-const formatRp = n => 'Rp ' + Number(n).toLocaleString('id-ID');
-
-/* ================= INIT ================= */
-function init() {
-  renderMenuGrid();
-  updateStats();
-  renderHistory();
-  
-  setTimeout(() => {
-    const splash = document.getElementById('splash-screen');
-    splash.classList.add('hide-splash');
-  }, 3000); 
-}
-
-/* ================= RENDER MENU GRID ================= */
-function renderMenuGrid() {
-  const foodContainer = document.getElementById('foodGrid');
-  const drinkContainer = document.getElementById('drinkGrid');
-
-  // Bersihkan container terlebih dahulu
-  foodContainer.innerHTML = '';
-  drinkContainer.innerHTML = '';
-
-  DATA_MENU.forEach(item => {
-    if (!item.visible) return;
-
-    const el = document.createElement('div');
-    el.className = 'menu-item';
-    
-    // Layout baru: Footer untuk Harga dan Tombol
-    el.innerHTML = `
-      <div class="m-name">${item.label}</div>
-      <div class="menu-footer">
-         <div class="m-price">${formatRp(item.price)}</div>
-         <div id="controls_${item.id}">
-            <!-- Tombol Tambah akan dirender di sini oleh updateMenuGridUI -->
-         </div>
-      </div>
-    `;
-
-    if (item.category === 'food') foodContainer.appendChild(el);
-    else drinkContainer.appendChild(el);
-  });
-  
-  // Update tombol setelah render
-  updateMenuGridUI();
-}
-
-function updateMenuGridUI() {
-  DATA_MENU.forEach(item => {
-    const controlContainer = document.getElementById(`controls_${item.id}`);
-    if(!controlContainer) return;
-
-    // Cari jumlah item ini di keranjang (Hanya yang harganya SESUAI standar)
-    const cartItem = cart.find(c => c.id === item.id && c.price === item.price);
-    const qty = cartItem ? cartItem.qty : 0;
-
-    if (qty > 0) {
-      // Tampilkan tombol Plus Minus
-      controlContainer.innerHTML = `
-        <div class="qty-controls">
-           <button class="qty-btn minus" onclick="decreaseFromCart('${item.id}', ${item.price})">−</button>
-           <div class="qty-val">${qty}</div>
-           <button class="qty-btn plus" onclick="addToCart(DATA_MENU.find(i=>i.id==='${item.id}'))">+</button>
-        </div>
-      `;
-    } else {
-      // Tampilkan tombol Tambah Sederhana
-      controlContainer.innerHTML = `
-         <button class="add-btn-simple" onclick="addToCart(DATA_MENU.find(i=>i.id==='${item.id}'))">
-            <span>Tambah</span>
-            <span style="background:rgba(255,255,255,0.2); border-radius:4px; padding:0 4px; font-size:10px">+</span>
-         </button>
-      `;
-    }
-  });
-}
-
-/* ================= CART LOGIC ================= */
-function addToCart(item, qty = 1, customPrice = null) {
-  const priceToUse = customPrice || item.price;
-  const existing = cart.find(c => c.id === item.id && c.price === priceToUse);
-  
-  if (existing) {
-    existing.qty += qty;
-  } else {
-    cart.push({
-      id: item.id,
-      label: item.label,
-      price: priceToUse,
-      qty: qty
-    });
-  }
-  renderCart();
-}
-
-function decreaseFromCart(itemId, price) {
-  const index = cart.findIndex(c => c.id === itemId && c.price === price);
-  if (index !== -1) {
-    cart[index].qty -= 1;
-    if (cart[index].qty <= 0) {
-      cart.splice(index, 1);
-    }
-  }
-  renderCart();
-}
-
-function renderCart() {
-  const container = document.getElementById('cartList');
-  container.innerHTML = '';
-  let total = 0;
-
-  // Update UI Kartu Menu (Sinkronisasi Qty)
-  updateMenuGridUI();
-
-  if (cart.length === 0) {
-    container.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:30px;border:2px dashed #e2e8f0;border-radius:12px; background:#f8fafc">Keranjang masih kosong</div>';
-  } else {
-    cart.forEach((c, idx) => {
-      total += c.price * c.qty;
-      
-      const row = document.createElement('div');
-      row.className = 'cart-row';
-      row.innerHTML = `
-        <div class="c-name">${c.label} <div style="color:#64748b; font-size:12px; font-weight:400">@${formatRp(c.price)}</div></div>
-        <div class="c-qty">x${c.qty}</div>
-        <div class="c-price">${formatRp(c.price * c.qty)}</div>
-        <button onclick="removeItem(${idx})" style="margin-left:8px;border:none;background:none;color:var(--red);font-weight:bold;cursor:pointer; padding:4px; font-size:16px;">×</button>
-      `;
-      container.appendChild(row);
-    });
-  }
-  document.getElementById('cartTotal').textContent = formatRp(total);
-}
-
-function removeItem(idx) {
-  cart.splice(idx, 1);
-  renderCart();
-}
-
-function resetCart() {
-  cart = [];
-  renderCart();
-  document.getElementById('aiInput').value = '';
-  document.getElementById('tableNum').value = '';
-}
-
-/* ================= AI PARSER LOGIC ================= */
-function parseAI() {
-  let text = document.getElementById('aiInput').value.toLowerCase();
-  
-  text = text.replace(/rb/g, '000');
-  text = text.replace(/\ba\b/g, 'sate ayam'); 
-  text = text.replace(/\bk\b/g, 'sate kambing');
-  text = text.replace(/\bkt\b/g, 'kambing tanpa lemak');
-  text = text.replace(/\bg\b/g, 'gule');
-  text = text.replace(/\bn\b/g, 'nasi'); // Penambahan Kode N = Nasi
-
-  if (!text.trim()) return;
-
-  const orders = text.split(/[\n,]+/);
-
-  orders.forEach(raw => {
-    const line = raw.trim();
-    if (!line) return;
-
-    let numbers = line.match(/\d+(\.\d+)?/g); 
-    let numericValues = numbers ? numbers.map(n => parseInt(n.replace(/\./g, ''))) : [1];
-    
-    let qty = 1;
-    let customPrice = null;
-
-    numericValues.forEach(val => {
-      if (val > 500) customPrice = val;
-      else qty = val;
-    });
-
-    let bestMatch = null;
-    let maxScore = 0;
-
-    DATA_MENU.forEach(item => {
-      item.keywords.forEach(key => {
-        if (line.includes(key)) {
-          if (key.length > maxScore) {
-            maxScore = key.length;
-            bestMatch = item;
-          }
+    <style>
+        /* Custom Scrollbar untuk bagian preview gambar */
+        .scrollbar-thin::-webkit-scrollbar {
+            height: 6px;
         }
-      });
-    });
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: #1e293b; 
+            border-radius: 4px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: #475569; 
+            border-radius: 4px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
 
-    if (bestMatch) {
-      if (customPrice && bestMatch.isFlexible) {
-        addToCart(bestMatch, 1, customPrice); 
-      } 
-      else if (customPrice && !bestMatch.isFlexible) {
-         let calculatedQty = Math.floor(customPrice / bestMatch.price);
-         if(calculatedQty > 0) addToCart(bestMatch, calculatedQty);
-      }
-      else {
-        addToCart(bestMatch, qty);
-      }
-    }
-  });
+        /* Print Styles */
+        @media print {
+            .print-hidden { display: none !important; }
+            .print-block { display: block !important; }
+            body { background: white; color: black; }
+            .break-inside-avoid { break-inside: avoid; }
+        }
+        @media screen {
+            .print-block { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200 font-sans selection:bg-blue-500/30 pb-20 md:pb-0">
 
-  document.getElementById('aiInput').value = '';
-}
+    <!-- ==========================================
+         TAMPILAN APLIKASI UTAMA (Layar Layar Biasa)
+         ========================================== -->
+    <div id="app-view" class="print-hidden min-h-screen">
+        
+        <!-- Header & Navigasi -->
+        <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-10">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-blue-600 p-2 rounded-lg">
+                            <i data-lucide="activity" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h1 class="text-xl font-bold text-white tracking-wide">Jurnal<span class="text-blue-500">Danras</span></h1>
+                    </div>
+                    
+                    <nav class="hidden md:flex space-x-1 bg-slate-800 p-1 rounded-lg">
+                        <button onclick="app.switchTab('dashboard')" id="nav-desktop-dashboard" class="px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 bg-blue-600 text-white shadow-sm">
+                            <i data-lucide="pie-chart" class="w-4 h-4"></i> Dashboard
+                        </button>
+                        <button onclick="app.switchTab('journal')" id="nav-desktop-journal" class="px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700">
+                            <i data-lucide="book-open" class="w-4 h-4"></i> Jurnal & Laporan
+                        </button>
+                        <button onclick="app.switchTab('learning')" id="nav-desktop-learning" class="px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700">
+                            <i data-lucide="book-text" class="w-4 h-4"></i> Edukasi
+                        </button>
+                    </nav>
+                </div>
+            </div>
+        </header>
 
-/* ================= CHECKOUT & TRANSACTION ================= */
-function showCheckout() {
-  if (cart.length === 0) return alert('Keranjang kosong');
-  const total = cart.reduce((a, b) => a + (b.price * b.qty), 0);
-  
-  document.getElementById('modalTotal').textContent = formatRp(total);
-  document.getElementById('paidInput').value = '';
-  document.getElementById('changeDisplay').textContent = 'Rp 0';
-  document.getElementById('paymentModal').style.display = 'flex';
-  
-  document.getElementById('paidInput').oninput = (e) => {
-    const paid = parseInt(e.target.value) || 0;
-    const change = paid - total;
-    document.getElementById('changeDisplay').textContent = formatRp(change);
-    document.getElementById('changeDisplay').style.color = change < 0 ? '#ef4444' : '#10b981';
-  };
-  
-  setTimeout(() => document.getElementById('paidInput').focus(), 100);
-}
+        <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+            
+            <!-- Widget Jam Global -->
+            <div class="mb-6 flex items-center gap-2 text-slate-400">
+                <i data-lucide="clock" class="w-[18px] h-[18px]"></i>
+                <h2 class="font-semibold text-sm uppercase tracking-wider">Jam Pasar Global</h2>
+            </div>
+            <div id="market-clocks" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <!-- Clocks will be rendered here by JS -->
+            </div>
 
-function addNol(val) {
-  const input = document.getElementById('paidInput');
-  input.value = input.value + val;
-  input.dispatchEvent(new Event('input'));
-  input.focus();
-}
+            <!-- --- TAB: DASHBOARD --- -->
+            <div id="tab-dashboard" class="space-y-6 animate-in fade-in duration-500 block">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Modal Awal -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-lg relative">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-slate-400 font-medium flex items-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> Modal Awal</h3>
+                            <button id="btn-edit-capital" onclick="app.toggleEditCapital()" class="text-slate-500 hover:text-blue-400"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                        </div>
+                        
+                        <div id="capital-display" class="block">
+                            <p class="text-3xl font-bold text-white tracking-tight mt-1">$<span id="initial-capital-text">0.00</span></p>
+                        </div>
+                        
+                        <div id="capital-edit" class="hidden items-center gap-2 mt-2">
+                            <span class="text-xl text-slate-400">$</span>
+                            <input type="number" id="input-capital" class="w-full bg-slate-900 border border-slate-700 rounded p-1 text-white font-mono focus:outline-none" />
+                            <button onclick="app.saveCapital()" class="bg-blue-600 p-1.5 rounded text-white hover:bg-blue-700"><i data-lucide="save" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>
 
-function closeModal(modalId) {
-  document.getElementById(modalId).style.display = 'none';
-}
+                    <!-- Saldo Saat Ini -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-lg relative bg-gradient-to-br from-slate-800 to-slate-800/50">
+                        <h3 class="text-slate-400 font-medium mb-2">Saldo Saat Ini</h3>
+                        <p id="current-balance" class="text-4xl font-bold tracking-tight text-blue-400">$0.00</p>
+                        <p class="text-xs text-slate-500 mt-2">Modal + Total PnL</p>
+                    </div>
 
-function processTransaction() {
-  const total = cart.reduce((a, b) => a + (b.price * b.qty), 0);
-  const paid = parseInt(document.getElementById('paidInput').value) || 0;
-  const tableNum = document.getElementById('tableNum').value || '-';
-  
-  if (paid < total && paid !== 0) {
-    if(!confirm('Uang kurang! Tetap lanjutkan sebagai utang/kurang bayar?')) return;
-  }
+                    <!-- Total PnL -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-lg relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="dollar-sign" class="w-20 h-20"></i></div>
+                        <h3 class="text-slate-400 font-medium mb-2">Net Profit/Loss</h3>
+                        <p id="net-pnl" class="text-3xl font-bold tracking-tight text-slate-400">$0.00</p>
+                        <div class="mt-4 flex items-center gap-2 text-sm">
+                            <span id="pnl-icon"></span>
+                            <span class="text-slate-400">Total <span id="total-trades-count">0</span> trade</span>
+                        </div>
+                    </div>
 
-  const trx = {
-    id: Date.now(),
-    date: new Date().toLocaleString('id-ID'),
-    tableNum: tableNum,
-    items: [...cart],
-    total: total,
-    paid: paid
-  };
+                    <!-- Win Rate -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-lg">
+                        <h3 class="text-slate-400 font-medium mb-2">Win Rate</h3>
+                        <p id="win-rate-text" class="text-3xl font-bold text-white tracking-tight">0%</p>
+                        <div class="w-full bg-slate-700 rounded-full h-2 mt-4 overflow-hidden">
+                            <div id="win-rate-bar" class="bg-blue-500 h-full rounded-full" style="width: 0%"></div>
+                        </div>
+                        <p id="win-loss-text" class="mt-2 text-xs text-slate-400">0 Win / 0 Loss</p>
+                    </div>
+                </div>
+            </div>
 
-  transactions.unshift(trx);
-  localStorage.setItem('trx_cak_sabar', JSON.stringify(transactions));
-  
-  resetCart();
-  closeModal('paymentModal');
-  updateStats();
-  renderHistory();
-  alert('Transaksi Berhasil!');
-}
+            <!-- --- TAB: JURNAL TRADING --- -->
+            <div id="tab-journal" class="space-y-6 animate-in fade-in duration-500 hidden">
+                
+                <!-- Form Tambah Trade -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
+                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <i data-lucide="plus" class="w-5 h-5 text-blue-400"></i> Catat Trade Baru
+                    </h2>
+                    <form id="form-trade" class="space-y-4">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div>
+                                <label class="block text-[10px] text-slate-400 mb-1 uppercase tracking-wider">Tanggal</label>
+                                <input type="date" id="trade-date" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-400 mb-1 uppercase tracking-wider">Aset (Cth: XAU)</label>
+                                <input type="text" id="trade-asset" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none uppercase" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-400 mb-1 uppercase tracking-wider">Posisi</label>
+                                <select id="trade-type" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                                    <option value="Long">Buy (Long)</option>
+                                    <option value="Short">Sell (Short)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-400 mb-1 uppercase tracking-wider">PnL ($)</label>
+                                <input type="number" step="0.01" id="trade-pnl" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none" />
+                            </div>
+                        </div>
 
-/* ================= PRINT RECEIPT ================= */
-function printReceipt() {
-  const tableNum = document.getElementById('tableNum').value || '-';
-  const paid = parseInt(document.getElementById('paidInput').value) || 0;
-  const total = cart.reduce((a, b) => a + (b.price * b.qty), 0);
-  const change = paid - total;
-  const dateNow = new Date().toLocaleString('id-ID');
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] text-slate-400 mb-1 flex items-center gap-1 uppercase tracking-wider"><i data-lucide="target" class="w-3 h-3"></i> TP (Opsional)</label>
+                                <input type="number" step="0.00001" id="trade-tp" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-400 mb-1 flex items-center gap-1 uppercase tracking-wider"><i data-lucide="shield-alert" class="w-3 h-3"></i> SL (Opsional)</label>
+                                <input type="number" step="0.00001" id="trade-sl" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none" />
+                            </div>
+                        </div>
 
-  let itemsHtml = `
-    <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:10px">
-      <tr style="border-bottom:1px dashed #000">
-        <th style="text-align:left; padding:4px 0">Menu</th>
-        <th style="text-align:center; padding:4px 0; width:40px">Jml</th>
-        <th style="text-align:right; padding:4px 0">Total</th>
-      </tr>
-  `;
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] text-slate-400 mb-1 uppercase tracking-wider">Catatan Entry</label>
+                                <textarea id="trade-notes" placeholder="Analisa..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none h-16 resize-none"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-400 mb-1 flex items-center gap-1 uppercase tracking-wider"><i data-lucide="lightbulb" class="w-3 h-3 text-yellow-400"></i> Pembelajaran</label>
+                                <textarea id="trade-learning" placeholder="Pelajaran..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-yellow-500/50 focus:outline-none h-16 resize-none"></textarea>
+                            </div>
+                        </div>
 
-  cart.forEach(item => {
-    itemsHtml += `
-      <tr>
-        <td style="padding:4px 0; vertical-align:top">${item.label} <br><small style="color:#555">@${formatRp(item.price)}</small></td>
-        <td style="text-align:center; padding:4px 0; vertical-align:top">${item.qty}</td>
-        <td style="text-align:right; padding:4px 0; vertical-align:top">${formatRp(item.price * item.qty)}</td>
-      </tr>
-    `;
-  });
-  
-  itemsHtml += `</table>`;
+                        <div class="flex flex-col md:flex-row gap-4 items-end pt-2 border-t border-slate-700/50">
+                            <div class="flex-1 w-full">
+                                <label class="block text-[10px] text-slate-400 mb-1 flex items-center gap-1 uppercase tracking-wider"><i data-lucide="image" class="w-3 h-3"></i> Upload Chart (Bisa Banyak)</label>
+                                <input type="file" multiple accept="image/*" id="trade-images-input" onchange="app.handleImageUpload(event, 'trade')" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-400 file:mr-4 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer" />
+                                
+                                <div id="trade-images-preview" class="flex gap-2 mt-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-slate-600 empty:hidden">
+                                    <!-- Previews will appear here -->
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                                Simpan Trade
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
-  const receiptHtml = `
-    <div class="receipt-header">
-      <div class="receipt-title">WARUNG CAKSABAR</div>
-      <div class="receipt-info">Jl. Brigjen Katamso No.88-81</div>
-      <div class="receipt-info">Telp/WA: 0852 3141 3408</div>
-      <div class="receipt-info" style="margin-top:8px">${dateNow}</div>
-      <div class="receipt-info" style="font-weight:bold; font-size:14px">MEJA: ${tableNum}</div>
+                <!-- Filter & Export -->
+                <div class="flex justify-between items-center gap-4 bg-slate-800 border border-slate-700 rounded-xl p-3 shadow-sm">
+                    <input type="month" id="filter-month" onchange="app.updateFilterMonth(event)" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                    <div class="flex items-center gap-3">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-[10px] text-slate-400 uppercase">PnL Bulan Ini</p>
+                            <p id="monthly-pnl" class="font-mono text-sm font-bold text-slate-400">$0.00</p>
+                        </div>
+                        <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 p-2 sm:px-4 sm:py-2 rounded-lg text-white text-sm font-medium transition-colors flex items-center gap-2">
+                            <i data-lucide="printer" class="w-4 h-4"></i> <span class="hidden sm:inline">PDF</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Riwayat Trading List -->
+                <div id="trades-list" class="space-y-2">
+                    <!-- Trades injected here -->
+                </div>
+            </div>
+
+            <!-- --- TAB: EDUKASI --- -->
+            <div id="tab-learning" class="space-y-6 animate-in fade-in duration-500 hidden">
+                
+                <!-- Form Edukasi -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
+                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <i data-lucide="book-open" class="w-5 h-5 text-purple-400"></i> Catat Edukasi Baru
+                    </h2>
+                    <form id="form-learning" class="space-y-4">
+                        <div class="flex flex-col md:flex-row gap-3">
+                            <div class="w-full md:w-1/3">
+                                <label class="block text-[10px] text-slate-400 mb-1 uppercase tracking-wider">Topik / Istilah</label>
+                                <input type="text" id="learning-term" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-purple-500 focus:outline-none" />
+                            </div>
+                            <div class="w-full md:w-2/3">
+                                <label class="block text-[10px] text-slate-400 mb-1 uppercase tracking-wider">Penjelasan</label>
+                                <input type="text" id="learning-def" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-purple-500 focus:outline-none" />
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col md:flex-row gap-4 items-end">
+                            <div class="flex-1 w-full">
+                                <label class="block text-[10px] text-slate-400 mb-1 flex items-center gap-1 uppercase tracking-wider"><i data-lucide="image" class="w-3 h-3"></i> Lampirkan Gambar (Opsional)</label>
+                                <input type="file" multiple accept="image/*" id="learning-images-input" onchange="app.handleImageUpload(event, 'learning')" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-400 file:mr-4 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700 cursor-pointer" />
+                                
+                                <div id="learning-images-preview" class="flex gap-2 mt-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-slate-600 empty:hidden">
+                                    <!-- Previews will appear here -->
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full md:w-auto bg-purple-600 hover:bg-purple-700 text-white px-8 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                                Simpan Catatan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Daftar Edukasi List -->
+                <div id="learnings-list" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <!-- Learnings injected here -->
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Navigasi Mobile (Bottom Bar) -->
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 z-40 flex justify-around items-center">
+            <button onclick="app.switchTab('dashboard')" id="nav-mobile-dashboard" class="flex flex-col items-center justify-center w-full py-3 text-blue-500">
+                <i data-lucide="pie-chart" class="w-6 h-6 mb-1"></i>
+                <span class="text-[10px] font-medium">Dashboard</span>
+            </button>
+            <button onclick="app.switchTab('journal')" id="nav-mobile-journal" class="flex flex-col items-center justify-center w-full py-3 text-slate-500 hover:text-slate-400">
+                <i data-lucide="book-open" class="w-6 h-6 mb-1"></i>
+                <span class="text-[10px] font-medium">Jurnal</span>
+            </button>
+            <button onclick="app.switchTab('learning')" id="nav-mobile-learning" class="flex flex-col items-center justify-center w-full py-3 text-slate-500 hover:text-slate-400">
+                <i data-lucide="book-text" class="w-6 h-6 mb-1"></i>
+                <span class="text-[10px] font-medium">Edukasi</span>
+            </button>
+        </nav>
     </div>
+
+    <!-- ==========================================
+         MODALS (FULLSCREEN DETAILS)
+         ========================================== -->
     
-    <div>${itemsHtml}</div>
-    
-    <div class="receipt-divider"></div>
-    
-    <div class="receipt-total">
-      <span>TOTAL</span>
-      <span>${formatRp(total)}</span>
+    <!-- Modal Trade Detail -->
+    <div id="modal-trade" class="fixed inset-0 bg-slate-900 z-[100] overflow-y-auto hidden">
+        <div class="sticky top-0 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 p-4 flex items-center justify-between z-10">
+            <button onclick="app.closeModal('trade')" class="flex items-center gap-2 text-slate-400 hover:text-white px-2 py-1 bg-slate-800 rounded-lg">
+                <i data-lucide="arrow-left" class="w-[18px] h-[18px]"></i> <span class="text-sm font-medium">Kembali</span>
+            </button>
+            <button id="modal-trade-delete" class="text-rose-400 bg-rose-500/10 p-2 rounded-lg hover:bg-rose-500/20"><i data-lucide="trash-2" class="w-[18px] h-[18px]"></i></button>
+        </div>
+        <div id="modal-trade-content" class="p-4 md:p-8 max-w-3xl mx-auto space-y-6 pb-24">
+            <!-- Content Injected via JS -->
+        </div>
     </div>
-    <div class="receipt-item" style="margin-top:8px">
-      <span>Bayar (Tunai)</span>
-      <span>${formatRp(paid)}</span>
-    </div>
-    <div class="receipt-item">
-      <span>Kembali</span>
-      <span>${formatRp(change < 0 ? 0 : change)}</span>
-    </div>
-    
-    <div class="receipt-footer">
-      <div>Terima Kasih atas Kunjungan Anda</div>
-      <div>Simpan struk ini sebagai bukti pembayaran</div>
-    </div>
-  `;
 
-  document.getElementById('receipt-area').innerHTML = receiptHtml;
-  window.print();
-}
+    <!-- Modal Learning Detail -->
+    <div id="modal-learning" class="fixed inset-0 bg-slate-900 z-[100] overflow-y-auto hidden">
+        <div class="sticky top-0 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 p-4 flex items-center justify-between z-10">
+            <button onclick="app.closeModal('learning')" class="flex items-center gap-2 text-slate-400 hover:text-white px-2 py-1 bg-slate-800 rounded-lg">
+                <i data-lucide="arrow-left" class="w-[18px] h-[18px]"></i> <span class="text-sm font-medium">Kembali</span>
+            </button>
+            <button id="modal-learning-delete" class="text-rose-400 bg-rose-500/10 p-2 rounded-lg hover:bg-rose-500/20"><i data-lucide="trash-2" class="w-[18px] h-[18px]"></i></button>
+        </div>
+        <div id="modal-learning-content" class="p-4 md:p-8 max-w-3xl mx-auto space-y-6 pb-24">
+             <!-- Content Injected via JS -->
+        </div>
+    </div>
 
-/* ================= REPORT PAGE ================= */
-function showReport() {
-  const salesStats = {}; 
-  
-  transactions.forEach(t => {
-    t.items.forEach(item => {
-      const key = `${item.id}_${item.price}`;
-      
-      if (!salesStats[key]) {
-        const menuRef = DATA_MENU.find(m => m.id === item.id);
-        const category = menuRef ? menuRef.category : 'food';
-        const isCustom = menuRef ? (menuRef.price !== item.price) : false;
+    <!-- ==========================================
+         PRINT VIEW (CETAK PDF Laporan)
+         ========================================== -->
+    <div id="print-view" class="print-block font-sans text-black hidden p-8">
+        <!-- Content injected before print via JS -->
+    </div>
 
-        salesStats[key] = {
-          id: item.id, // Menyimpan ID agar bisa dicek jenis satenya
-          label: item.label,
-          price: item.price,
-          qty: 0,
-          category: category,
-          isCustom: isCustom
+
+    <!-- ==========================================
+         JAVASCRIPT LOGIC
+         ========================================== -->
+    <script>
+        // Init Lucide Icons
+        lucide.createIcons();
+
+        // Application State & Logic
+        const app = {
+            state: {
+                activeTab: 'dashboard',
+                initialCapital: 0,
+                trades: [],
+                learnings: [],
+                filterMonth: new Date().toISOString().slice(0, 7),
+                
+                // Temporary states for forms
+                newTradeImages: [],
+                newLearningImages: []
+            },
+
+            // Initialization
+            init() {
+                // Set default dates
+                document.getElementById('trade-date').value = new Date().toISOString().split('T')[0];
+                document.getElementById('filter-month').value = this.state.filterMonth;
+
+                this.startClocks();
+                this.renderAll();
+                this.setupEventListeners();
+                
+                // Hook print event
+                window.addEventListener('beforeprint', () => this.generatePrintView());
+            },
+
+            // Navigation
+            switchTab(tabId) {
+                this.state.activeTab = tabId;
+                
+                // Hide all tabs
+                document.querySelectorAll('[id^="tab-"]').forEach(el => {
+                    el.classList.remove('block');
+                    el.classList.add('hidden');
+                });
+                
+                // Show active tab
+                document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+                document.getElementById(`tab-${tabId}`).classList.add('block');
+
+                // Update Desktop Nav Styling
+                const dtTabs = ['dashboard', 'journal', 'learning'];
+                dtTabs.forEach(t => {
+                    const btn = document.getElementById(`nav-desktop-${t}`);
+                    if (t === tabId) {
+                        btn.className = "px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 bg-blue-600 text-white shadow-sm";
+                    } else {
+                        btn.className = "px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 text-slate-400 hover:text-slate-200 hover:bg-slate-700";
+                    }
+                });
+
+                // Update Mobile Nav Styling
+                dtTabs.forEach(t => {
+                    const btn = document.getElementById(`nav-mobile-${t}`);
+                    if (t === tabId) {
+                        btn.className = "flex flex-col items-center justify-center w-full py-3 text-blue-500";
+                    } else {
+                        btn.className = "flex flex-col items-center justify-center w-full py-3 text-slate-500 hover:text-slate-400";
+                    }
+                });
+            },
+
+            // Clocks
+            startClocks() {
+                const render = () => {
+                    const time = new Date();
+                    const markets = [
+                        { name: 'Jakarta (WIB)', tz: 'Asia/Jakarta', flag: '🇮🇩' },
+                        { name: 'New York', tz: 'America/New_York', flag: '🇺🇸' },
+                        { name: 'London', tz: 'Europe/London', flag: '🇬🇧' },
+                        { name: 'Tokyo', tz: 'Asia/Tokyo', flag: '🇯🇵' },
+                    ];
+
+                    let html = '';
+                    markets.forEach(market => {
+                        const localHour = parseInt(time.toLocaleTimeString('en-US', { timeZone: market.tz, hour12: false, hour: '2-digit' }));
+                        const localWeekday = time.toLocaleDateString('en-US', { timeZone: market.tz, weekday: 'short' });
+                        const isWeekend = localWeekday === 'Sat' || localWeekday === 'Sun';
+                        const isMarketOpen = !isWeekend && (localHour >= 9 && localHour < 17);
+                        const timeStr = time.toLocaleTimeString('id-ID', { timeZone: market.tz, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+                        html += `
+                            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col items-center justify-center relative overflow-hidden group hover:border-blue-500/50 transition-colors">
+                                <div class="absolute top-0 w-full h-1 ${isMarketOpen ? 'bg-emerald-500' : 'bg-slate-600'}"></div>
+                                <span class="text-2xl mb-2">${market.flag}</span>
+                                <h3 class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">${market.name}</h3>
+                                <p class="text-sm md:text-xl font-mono text-slate-100 tracking-tight">${timeStr}</p>
+                                <span class="text-[10px] mt-2 px-2 py-0.5 rounded-full ${isMarketOpen ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-700 text-slate-400'}">
+                                    ${isMarketOpen ? 'OPEN' : 'CLOSED'}
+                                </span>
+                            </div>
+                        `;
+                    });
+                    document.getElementById('market-clocks').innerHTML = html;
+                };
+                render();
+                setInterval(render, 1000);
+            },
+
+            // Dashboard Capital Logic
+            toggleEditCapital() {
+                document.getElementById('capital-display').classList.add('hidden');
+                document.getElementById('btn-edit-capital').classList.add('hidden');
+                document.getElementById('capital-edit').classList.remove('hidden');
+                document.getElementById('capital-edit').classList.add('flex');
+                document.getElementById('input-capital').value = this.state.initialCapital;
+                document.getElementById('input-capital').focus();
+            },
+
+            saveCapital() {
+                this.state.initialCapital = parseFloat(document.getElementById('input-capital').value) || 0;
+                document.getElementById('capital-edit').classList.add('hidden');
+                document.getElementById('capital-edit').classList.remove('flex');
+                document.getElementById('capital-display').classList.remove('hidden');
+                document.getElementById('btn-edit-capital').classList.remove('hidden');
+                this.renderDashboard();
+            },
+
+            // Form Handlers
+            setupEventListeners() {
+                // Submit Trade
+                document.getElementById('form-trade').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const newTrade = {
+                        id: Date.now(),
+                        date: document.getElementById('trade-date').value,
+                        asset: document.getElementById('trade-asset').value.toUpperCase(),
+                        type: document.getElementById('trade-type').value,
+                        pnl: parseFloat(document.getElementById('trade-pnl').value) || 0,
+                        tp: document.getElementById('trade-tp').value,
+                        sl: document.getElementById('trade-sl').value,
+                        notes: document.getElementById('trade-notes').value,
+                        learning: document.getElementById('trade-learning').value,
+                        images: [...this.state.newTradeImages]
+                    };
+                    
+                    this.state.trades.unshift(newTrade);
+                    
+                    // Reset
+                    e.target.reset();
+                    document.getElementById('trade-date').value = new Date().toISOString().split('T')[0];
+                    this.state.newTradeImages = [];
+                    this.renderImagePreviews('trade');
+                    this.renderAll();
+                });
+
+                // Submit Learning
+                document.getElementById('form-learning').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const newLearning = {
+                        id: Date.now(),
+                        term: document.getElementById('learning-term').value,
+                        definition: document.getElementById('learning-def').value,
+                        images: [...this.state.newLearningImages]
+                    };
+                    
+                    this.state.learnings.unshift(newLearning);
+                    
+                    // Reset
+                    e.target.reset();
+                    this.state.newLearningImages = [];
+                    this.renderImagePreviews('learning');
+                    this.renderLearnings();
+                });
+            },
+
+            // Image Handlers
+            handleImageUpload(e, type) {
+                const files = Array.from(e.target.files);
+                if (files.length === 0) return;
+
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        if(type === 'trade') {
+                            this.state.newTradeImages.push(reader.result);
+                        } else {
+                            this.state.newLearningImages.push(reader.result);
+                        }
+                        this.renderImagePreviews(type);
+                    };
+                    reader.readAsDataURL(file);
+                });
+                // Reset input file value so you can select the same file again if needed
+                e.target.value = ''; 
+            },
+
+            removeImagePreview(index, type) {
+                if(type === 'trade') {
+                    this.state.newTradeImages.splice(index, 1);
+                } else {
+                    this.state.newLearningImages.splice(index, 1);
+                }
+                this.renderImagePreviews(type);
+            },
+
+            renderImagePreviews(type) {
+                const images = type === 'trade' ? this.state.newTradeImages : this.state.newLearningImages;
+                const container = document.getElementById(`${type}-images-preview`);
+                
+                let html = '';
+                images.forEach((img, idx) => {
+                    html += `
+                        <div class="relative w-12 h-12 rounded-md overflow-hidden border border-slate-600 group flex-shrink-0">
+                            <img src="${img}" class="w-full h-full object-cover" />
+                            <button type="button" onclick="app.removeImagePreview(${idx}, '${type}')" class="absolute inset-0 bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+                lucide.createIcons();
+            },
+
+            // Month Filter
+            updateFilterMonth(e) {
+                this.state.filterMonth = e.target.value;
+                this.renderJournal();
+            },
+
+            // Rendering Logic
+            renderAll() {
+                this.renderDashboard();
+                this.renderJournal();
+                this.renderLearnings();
+            },
+
+            renderDashboard() {
+                const totalPnL = this.state.trades.reduce((acc, curr) => acc + curr.pnl, 0);
+                const currentBalance = this.state.initialCapital + totalPnL;
+                const winningTrades = this.state.trades.filter(t => t.pnl > 0).length;
+                const winRate = this.state.trades.length > 0 ? ((winningTrades / this.state.trades.length) * 100).toFixed(1) : 0;
+
+                document.getElementById('initial-capital-text').innerText = this.state.initialCapital.toFixed(2);
+                
+                const cbEl = document.getElementById('current-balance');
+                cbEl.innerText = `$${currentBalance.toFixed(2)}`;
+                cbEl.className = `text-4xl font-bold tracking-tight ${currentBalance >= this.state.initialCapital ? 'text-blue-400' : 'text-rose-400'}`;
+
+                const pnlEl = document.getElementById('net-pnl');
+                pnlEl.innerText = `${totalPnL >= 0 ? '+' : '-'}$${Math.abs(totalPnL).toFixed(2)}`;
+                pnlEl.className = `text-3xl font-bold tracking-tight ${totalPnL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+
+                document.getElementById('pnl-icon').innerHTML = totalPnL >= 0 
+                    ? `<i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>` 
+                    : `<i data-lucide="trending-down" class="w-4 h-4 text-rose-400"></i>`;
+                
+                document.getElementById('total-trades-count').innerText = this.state.trades.length;
+
+                document.getElementById('win-rate-text').innerText = `${winRate}%`;
+                document.getElementById('win-rate-bar').style.width = `${winRate}%`;
+                document.getElementById('win-loss-text').innerText = `${winningTrades} Win / ${this.state.trades.length - winningTrades} Loss`;
+                
+                lucide.createIcons();
+            },
+
+            renderJournal() {
+                const filteredTrades = this.state.trades.filter(t => t.date.startsWith(this.state.filterMonth));
+                const monthlyPnL = filteredTrades.reduce((acc, curr) => acc + curr.pnl, 0);
+
+                // Update Monthly PnL UI
+                const pnlEl = document.getElementById('monthly-pnl');
+                pnlEl.innerText = `${monthlyPnL >= 0 ? '+' : '-'}$${Math.abs(monthlyPnL).toFixed(2)}`;
+                pnlEl.className = `font-mono text-sm font-bold ${monthlyPnL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+
+                // Update List
+                const listEl = document.getElementById('trades-list');
+                if (filteredTrades.length === 0) {
+                    listEl.innerHTML = `<div class="bg-slate-800 border border-slate-700 rounded-xl p-6 text-center text-slate-500 text-sm">Tidak ada transaksi bulan ini.</div>`;
+                } else {
+                    let html = '';
+                    filteredTrades.forEach(trade => {
+                        const isProfit = trade.pnl >= 0;
+                        html += `
+                            <div onclick="app.openModal('trade', ${trade.id})" class="bg-slate-800 border border-slate-700 rounded-xl p-3 flex justify-between items-center hover:bg-slate-700/50 transition-colors group cursor-pointer">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-1 h-10 rounded-full ${isProfit ? 'bg-emerald-500' : 'bg-rose-500'}"></div>
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <h3 class="font-bold text-white">${trade.asset}</h3>
+                                            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${trade.type === 'Long' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">${trade.type}</span>
+                                        </div>
+                                        <span class="text-[11px] text-slate-400 flex items-center gap-1"><i data-lucide="clock" class="w-2.5 h-2.5"></i> ${trade.date}</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <div class="text-right">
+                                        <p class="font-mono font-bold ${isProfit ? 'text-emerald-400' : 'text-rose-400'}">
+                                            ${isProfit ? '+' : '-'}$${Math.abs(trade.pnl).toFixed(2)}
+                                        </p>
+                                    </div>
+                                    <button class="text-slate-500 group-hover:text-blue-400 bg-slate-900 p-1.5 rounded-lg transition-colors">
+                                        <i data-lucide="chevron-right" class="w-[18px] h-[18px]"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    listEl.innerHTML = html;
+                }
+                lucide.createIcons();
+            },
+
+            renderLearnings() {
+                const listEl = document.getElementById('learnings-list');
+                if (this.state.learnings.length === 0) {
+                    listEl.innerHTML = `<div class="col-span-full p-6 text-center text-slate-500 bg-slate-800 rounded-xl border border-slate-700 text-sm">Belum ada catatan pembelajaran.</div>`;
+                } else {
+                    let html = '';
+                    this.state.learnings.forEach(item => {
+                        const hasImages = item.images && item.images.length > 0;
+                        html += `
+                            <div onclick="app.openModal('learning', ${item.id})" class="bg-slate-800 border border-slate-700 p-4 rounded-xl flex justify-between items-center hover:border-purple-500/50 transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-3 overflow-hidden">
+                                    <div class="w-2 h-2 rounded-full bg-purple-500 flex-shrink-0"></div>
+                                    <div class="overflow-hidden">
+                                        <h3 class="font-bold text-white text-sm truncate">${item.term}</h3>
+                                        <p class="text-xs text-slate-400 truncate mt-0.5">${item.definition}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 pl-2">
+                                    ${hasImages ? `<i data-lucide="image" class="w-3.5 h-3.5 text-slate-500"></i>` : ''}
+                                    <button class="text-slate-500 group-hover:text-purple-400 bg-slate-900 p-1.5 rounded-lg transition-colors flex-shrink-0">
+                                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    listEl.innerHTML = html;
+                }
+                lucide.createIcons();
+            },
+
+            // Modal Handlers
+            openModal(type, id) {
+                if (type === 'trade') {
+                    const trade = this.state.trades.find(t => t.id === id);
+                    if (!trade) return;
+                    
+                    const isProfit = trade.pnl >= 0;
+                    document.getElementById('modal-trade-delete').onclick = () => { this.deleteItem('trade', id); };
+                    
+                    let imagesHtml = '';
+                    if (trade.images && trade.images.length > 0) {
+                        const imgs = trade.images.map(img => `<img src="${img}" class="w-full h-auto rounded-xl border border-slate-700 shadow-lg" onclick="window.open('${img}')" />`).join('');
+                        imagesHtml = `
+                            <div>
+                                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2"><i data-lucide="image" class="w-3.5 h-3.5"></i> Bukti Chart (${trade.images.length})</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${imgs}</div>
+                            </div>
+                        `;
+                    }
+
+                    document.getElementById('modal-trade-content').innerHTML = `
+                        <div class="flex flex-col items-center text-center space-y-2 mb-8 animate-in fade-in slide-in-from-bottom-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${trade.type === 'Long' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}">
+                                ${trade.type} POSITION
+                            </span>
+                            <h1 class="text-4xl md:text-5xl font-black text-white">${trade.asset}</h1>
+                            <p class="text-slate-400 flex items-center justify-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> ${trade.date}</p>
+                            
+                            <div class="mt-4 p-6 bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-sm mx-auto shadow-2xl">
+                                <p class="text-sm text-slate-400 mb-1">Realized Profit / Loss</p>
+                                <p class="text-5xl font-mono font-black tracking-tight ${isProfit ? 'text-emerald-400' : 'text-rose-400'}">
+                                    ${isProfit ? '+' : '-'}$${Math.abs(trade.pnl).toFixed(2)}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-slate-800/50 border border-slate-700/50 p-4 rounded-xl flex flex-col items-center">
+                                <i data-lucide="target" class="w-5 h-5 text-blue-400 mb-2"></i>
+                                <span class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Take Profit</span>
+                                <span class="font-mono text-white">${trade.tp || '-'}</span>
+                            </div>
+                            <div class="bg-slate-800/50 border border-slate-700/50 p-4 rounded-xl flex flex-col items-center">
+                                <i data-lucide="shield-alert" class="w-5 h-5 text-rose-400 mb-2"></i>
+                                <span class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Stop Loss</span>
+                                <span class="font-mono text-white">${trade.sl || '-'}</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 relative">
+                                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500 rounded-l-2xl"></div>
+                                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 pl-2">Catatan Analisa / Entry</h3>
+                                <p class="text-slate-200 leading-relaxed pl-2">${trade.notes || 'Tidak ada catatan untuk transaksi ini.'}</p>
+                            </div>
+
+                            ${trade.learning ? `
+                                <div class="bg-yellow-500/10 rounded-2xl p-5 border border-yellow-500/20 relative">
+                                    <div class="absolute top-0 left-0 w-1 h-full bg-yellow-400 rounded-l-2xl"></div>
+                                    <h3 class="text-xs font-bold text-yellow-500/80 uppercase tracking-wider mb-2 flex items-center gap-1 pl-2"><i data-lucide="lightbulb" class="w-3 h-3"></i> Pembelajaran Didapat</h3>
+                                    <p class="text-yellow-100/90 leading-relaxed pl-2 font-medium">${trade.learning}</p>
+                                </div>
+                            ` : ''}
+                        </div>
+                        ${imagesHtml}
+                    `;
+                    document.getElementById('modal-trade').classList.remove('hidden');
+
+                } else if (type === 'learning') {
+                    const learning = this.state.learnings.find(l => l.id === id);
+                    if (!learning) return;
+
+                    document.getElementById('modal-learning-delete').onclick = () => { this.deleteItem('learning', id); };
+
+                    let imagesHtml = '';
+                    if (learning.images && learning.images.length > 0) {
+                        const imgs = learning.images.map(img => `<img src="${img}" class="w-full h-auto rounded-xl border border-slate-700 shadow-lg" onclick="window.open('${img}')" />`).join('');
+                        imagesHtml = `
+                            <div>
+                                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2"><i data-lucide="image" class="w-3.5 h-3.5"></i> Gambar Referensi</h3>
+                                <div class="grid grid-cols-1 gap-4">${imgs}</div>
+                            </div>
+                        `;
+                    }
+
+                    document.getElementById('modal-learning-content').innerHTML = `
+                        <div class="mb-8 animate-in fade-in slide-in-from-bottom-4">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-3 h-3 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]"></div>
+                                <h1 class="text-3xl md:text-4xl font-black text-white">${learning.term}</h1>
+                            </div>
+                            <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700/50 shadow-xl">
+                                <p class="text-slate-300 text-lg leading-relaxed">${learning.definition}</p>
+                            </div>
+                        </div>
+                        ${imagesHtml}
+                    `;
+                    document.getElementById('modal-learning').classList.remove('hidden');
+                }
+                
+                lucide.createIcons();
+                document.body.style.overflow = 'hidden'; // prevent background scrolling
+            },
+
+            closeModal(type) {
+                document.getElementById(`modal-${type}`).classList.add('hidden');
+                document.body.style.overflow = '';
+            },
+
+            deleteItem(type, id) {
+                if(type === 'trade') {
+                    this.state.trades = this.state.trades.filter(t => t.id !== id);
+                    this.closeModal('trade');
+                    this.renderAll();
+                } else {
+                    this.state.learnings = this.state.learnings.filter(l => l.id !== id);
+                    this.closeModal('learning');
+                    this.renderLearnings();
+                }
+            },
+
+            // Generate Print HTML (Dipanggil otomatis saat tekan tombol PDF)
+            generatePrintView() {
+                const filteredTrades = this.state.trades.filter(t => t.date.startsWith(this.state.filterMonth));
+                const monthlyPnL = filteredTrades.reduce((acc, curr) => acc + curr.pnl, 0);
+
+                let tradesHtml = '';
+                if (filteredTrades.length === 0) {
+                    tradesHtml = `<p class="text-center text-gray-500 my-10">Tidak ada transaksi yang tercatat pada bulan ini.</p>`;
+                } else {
+                    filteredTrades.forEach((trade, index) => {
+                        let imgsHtml = '<p class="text-gray-400 text-sm italic">Tidak ada screenshot dilampirkan.</p>';
+                        if (trade.images && trade.images.length > 0) {
+                            imgsHtml = `<div class="flex flex-wrap gap-2">` + 
+                                trade.images.map(img => `<img src="${img}" class="max-w-full h-auto max-h-48 border border-gray-300 rounded object-contain shadow-sm" />`).join('') +
+                            `</div>`;
+                        }
+
+                        tradesHtml += `
+                            <div class="border border-gray-300 rounded-lg p-5 break-inside-avoid mb-8">
+                                <div class="flex justify-between items-start mb-4 border-b border-gray-200 pb-3">
+                                    <div>
+                                        <h2 class="text-xl font-bold flex items-center gap-2">
+                                            #${index + 1} - ${trade.asset} 
+                                            <span class="text-sm px-2 py-0.5 rounded ${trade.type === 'Long' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${trade.type}</span>
+                                        </h2>
+                                        <p class="text-sm text-gray-500 mt-1">Tanggal: ${trade.date}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm text-gray-500">Realized PnL</p>
+                                        <p class="text-xl font-bold ${trade.pnl >= 0 ? 'text-green-600' : 'text-red-600'}">
+                                            ${trade.pnl >= 0 ? '+' : '-'}$${Math.abs(trade.pnl).toFixed(2)}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-6">
+                                    <div>
+                                        <div class="mb-4">
+                                            <h4 class="text-sm font-bold text-gray-700 uppercase">Catatan Entry</h4>
+                                            <p class="text-gray-800 mt-1">${trade.notes || '-'}</p>
+                                        </div>
+                                        ${trade.learning ? `
+                                        <div>
+                                            <h4 class="text-sm font-bold text-gray-700 uppercase">Pembelajaran</h4>
+                                            <p class="text-gray-800 mt-1 italic">"${trade.learning}"</p>
+                                        </div>
+                                        ` : ''}
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-gray-700 uppercase mb-2">Screenshot Chart</h4>
+                                        ${imgsHtml}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                document.getElementById('print-view').innerHTML = `
+                    <div class="border-b-2 border-black pb-4 mb-6">
+                        <h1 class="text-3xl font-bold">Laporan Jurnal Trading - Jurnal Danras</h1>
+                        <p class="text-gray-600 text-lg mt-1">Periode: ${this.state.filterMonth}</p>
+                    </div>
+
+                    <div class="flex justify-between mb-8 bg-gray-100 p-4 rounded-lg">
+                        <div>
+                            <p class="text-sm text-gray-600">Total Transaksi Bulan Ini</p>
+                            <p class="text-xl font-bold">${filteredTrades.length} Trade</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-gray-600">Net PnL Bulan Ini</p>
+                            <p class="text-2xl font-bold ${monthlyPnL >= 0 ? 'text-green-600' : 'text-red-600'}">
+                                ${monthlyPnL >= 0 ? '+' : '-'}$${Math.abs(monthlyPnL).toFixed(2)}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-8">
+                        ${tradesHtml}
+                    </div>
+
+                    <div class="mt-12 text-center text-sm text-gray-400 border-t border-gray-200 pt-4">
+                        Dicetak dari Aplikasi Jurnal Danras pada ${new Date().toLocaleDateString('id-ID')}
+                    </div>
+                `;
+            }
         };
-      }
-      salesStats[key].qty += item.qty;
-    });
-  });
 
-  const soldItems = Object.values(salesStats).sort((a, b) => b.qty - a.qty);
-  const foods = soldItems.filter(i => i.category === 'food');
-  const drinks = soldItems.filter(i => i.category === 'drink');
-  
-  let foodHtml = '';
-  let drinkHtml = '';
-  let totalFood = 0;
-  let totalDrink = 0;
+        // Initialize App on Load
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
 
-  const renderRow = (item) => {
-    let priceDisplay = `<span style="color:#64748b;font-size:12px">@ ${formatRp(item.price)}</span>`;
-    if (item.isCustom) {
-      priceDisplay = `<span style="color:#ef4444;font-size:12px;background:#fee2e2;padding:2px 8px;border-radius:6px;font-weight:600">Khusus: ${formatRp(item.price)}</span>`;
-    }
-
-    // LOGIKA PERHITUNGAN TUSUK
-    let qtyDisplay = item.qty;
-    
-    // Cek ID item apakah termasuk Sate Porsi (Porsi x 10)
-    // sk_porsi: Sate Kambing Porsi
-    // sk_nl_porsi: Sate Kambing Tanpa Lemak Porsi
-    // sa_porsi: Sate Ayam Porsi
-    if (['sk_porsi', 'sk_nl_porsi', 'sa_porsi'].includes(item.id)) {
-        qtyDisplay = `${item.qty} Porsi <span style="font-weight:800;color:var(--accent);font-size:12px;display:block">(${item.qty * 10} Tusuk)</span>`;
-    } 
-    // Cek ID item apakah termasuk Sate Tusuk (Eceran)
-    else if (['sk_tusuk', 'sk_nl_tusuk', 'sa_tusuk'].includes(item.id)) {
-        qtyDisplay = `${item.qty} Tusuk`;
-    }
-
-    return `
-      <tr class="report-row">
-        <td>
-          <div style="font-weight:600;color:#0f172a; margin-bottom:2px;">${item.label}</div>
-          <div>${priceDisplay}</div>
-        </td>
-        <td style="text-align:right;vertical-align:middle" class="report-qty">${qtyDisplay}</td>
-      </tr>`;
-  };
-
-  if (foods.length > 0) {
-    foodHtml += '<tr><td colspan="2" class="report-group-header">Makanan & Nasi</td></tr>';
-    foods.forEach(i => {
-      foodHtml += renderRow(i);
-      totalFood += i.qty;
-    });
-  }
-
-  if (drinks.length > 0) {
-    drinkHtml += '<tr><td colspan="2" class="report-group-header" style="border-top:1px solid #e2e8f0;">Minuman</td></tr>';
-    drinks.forEach(i => {
-      drinkHtml += renderRow(i);
-      totalDrink += i.qty;
-    });
-  }
-
-  const container = document.getElementById('reportContent');
-  
-  if (totalFood === 0 && totalDrink === 0) {
-    container.innerHTML = '<div style="text-align:center;color:var(--muted);padding:60px 20px;">Belum ada data penjualan.<br>Lakukan transaksi terlebih dahulu.</div>';
-  } else {
-    let html = '<table style="width:100%">';
-    html += '<tr style="background:#f8fafc"><th style="padding:14px 16px; border-bottom:2px solid #e2e8f0;">Menu Item</th><th style="text-align:right;padding:14px 16px; border-bottom:2px solid #e2e8f0;">Qty / Tusuk</th></tr>';
-    html += foodHtml;
-    html += drinkHtml;
-    html += '</table>';
-    
-    html += `
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px; padding: 0 20px 20px;">
-        <div style="background:#ecfeff;padding:20px;border-radius:12px;text-align:center;border:1px solid #cffafe">
-           <div style="font-size:13px;color:#0e7490;font-weight:700;margin-bottom:6px; text-transform:uppercase;">Total Transaksi Makanan</div>
-           <div style="font-weight:800;font-size:28px;color:#0891b2">${totalFood}</div>
-        </div>
-        <div style="background:#fff7ed;padding:20px;border-radius:12px;text-align:center;border:1px solid #ffedd5">
-           <div style="font-size:13px;color:#c2410c;font-weight:700;margin-bottom:6px; text-transform:uppercase;">Total Transaksi Minuman</div>
-           <div style="font-weight:800;font-size:28px;color:#ea580c">${totalDrink}</div>
-        </div>
-      </div>
-    `;
-
-    container.innerHTML = html;
-  }
-
-  const reportPage = document.getElementById('reportPage');
-  reportPage.style.display = 'flex';
-  document.body.style.overflow = 'hidden'; 
-}
-
-function closeReport() {
-  const reportPage = document.getElementById('reportPage');
-  reportPage.style.display = 'none';
-  document.body.style.overflow = '';
-}
-
-/* ================= HISTORY & STATS ================= */
-function updateStats() {
-  const today = new Date().toLocaleDateString('id-ID');
-  const todaysTrx = transactions.filter(t => t.date.includes(today)); 
-  const omset = todaysTrx.reduce((a, b) => a + b.total, 0);
-  document.getElementById('omsetVal').textContent = formatRp(omset);
-  document.getElementById('trxVal').textContent = todaysTrx.length;
-}
-
-function renderHistory() {
-  const table = document.getElementById('historyTable');
-  table.innerHTML = `
-    <tr>
-      <th style="width:120px;">Waktu</th>
-      <th style="width:60px;">Meja</th>
-      <th>Detail Pesanan</th>
-      <th style="text-align:right; width:120px;">Total</th>
-      <th style="text-align:center;width:100px;">Aksi</th>
-    </tr>`;
-  
-  transactions.slice(0, 20).forEach(t => {
-    const itemsStr = t.items.map(i => `${i.label} <span style="color:#64748b; font-weight:600">x${i.qty}</span>`).join(', ');
-    const mejaInfo = t.tableNum ? `<span style="background:#f1f5f9;padding:4px 8px;border-radius:6px;font-weight:700;font-size:12px; color:#475569; border:1px solid #e2e8f0;">${t.tableNum}</span>` : '-';
-    
-    const row = `
-      <tr>
-        <td style="color:#64748b;font-size:12px; font-family:monospace;">${t.date.split(',')[1] || t.date}</td>
-        <td style="text-align:center">${mejaInfo}</td>
-        <td style="line-height:1.5">${itemsStr}</td>
-        <td style="text-align:right;font-weight:700; color:#0f172a;">${formatRp(t.total)}</td>
-        <td style="text-align:center; white-space:nowrap">
-          <button onclick="editTransaction(${t.id})" class="action-btn edit" title="Edit Transaksi">
-             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          </button>
-          <button onclick="deleteTransaction(${t.id})" class="action-btn del" title="Hapus Transaksi">
-             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-          </button>
-        </td>
-      </tr>
-    `;
-    table.innerHTML += row;
-  });
-
-  if (transactions.length === 0) {
-    table.innerHTML += '<tr><td colspan="5" style="text-align:center;padding:40px;color:#cbd5e1; font-style:italic;">Belum ada riwayat transaksi hari ini</td></tr>';
-  }
-}
-
-function editTransaction(id) {
-  if (cart.length > 0) {
-    if (!confirm('Keranjang saat ini tidak kosong. Mengedit transaksi lama akan menimpa keranjang saat ini. Lanjutkan?')) return;
-  }
-  
-  const trxIndex = transactions.findIndex(t => t.id === id);
-  if (trxIndex === -1) return;
-  const trx = transactions[trxIndex];
-  
-  if(!confirm('Edit transaksi ini? Item akan kembali ke keranjang dan transaksi akan dihapus dari riwayat.')) return;
-  
-  cart = [...trx.items];
-  
-  if (trx.tableNum && trx.tableNum !== '-') {
-      document.getElementById('tableNum').value = trx.tableNum;
-  } else {
-      document.getElementById('tableNum').value = '';
-  }
-
-  transactions.splice(trxIndex, 1);
-  localStorage.setItem('trx_cak_sabar', JSON.stringify(transactions));
-  
-  renderCart();
-  updateStats();
-  renderHistory();
-  
-  // Scroll to Top on Mobile, or ensure visible on Desktop
-  window.scrollTo({top: 0, behavior: 'smooth'});
-}
-
-function deleteTransaction(id) {
-  if(!confirm('Yakin ingin menghapus transaksi ini?')) return;
-  transactions = transactions.filter(t => t.id !== id);
-  localStorage.setItem('trx_cak_sabar', JSON.stringify(transactions));
-  updateStats();
-  renderHistory();
-}
-
-function resetHistory() {
-  if (transactions.length === 0) return alert('Riwayat sudah kosong.');
-  if(!confirm('PERINGATAN: Anda akan menghapus SEMUA riwayat transaksi.\nData omset hari ini juga akan terhapus.\n\nLanjutkan?')) return;
-  transactions = [];
-  localStorage.setItem('trx_cak_sabar', JSON.stringify([]));
-  updateStats();
-  renderHistory();
-  alert('Riwayat berhasil dikosongkan.');
-}
-
-function exportExcel() {
-  const data = transactions.map(t => ({
-    Tanggal: t.date,
-    Meja: t.tableNum || '-',
-    Total: t.total,
-    Bayar: t.paid,
-    Item: t.items.map(i => `${i.label} (${i.qty})`).join('; ')
-  }));
-  
-  const ws = XLSX.utils.json_to_sheet(data);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Transaksi");
-  XLSX.writeFile(wb, "Laporan_Warung_Caksabar.xlsx");
-}
-
-init();
-</script>
+    </script>
 </body>
 </html>
