@@ -357,7 +357,9 @@
             init() {
                 return new Promise((resolve, reject) => {
                     const request = indexedDB.open(this.dbName, 1);
-                    request.onupgradeneeded = (e) => { e.target.result.createObjectStore(this.storeName); };
+                    request.onupgradeneeded = (e) => { 
+                        e.target.result.createObjectStore(this.storeName); 
+                    };
                     request.onsuccess = (e) => resolve(e.target.result);
                     request.onerror = (e) => reject(e.target.error);
                 });
@@ -406,7 +408,9 @@
                         this.state.trades = savedData.trades || [];
                         this.state.learnings = savedData.learnings || [];
                     }
-                } catch (err) { console.error("Gagal load database", err); }
+                } catch (err) { 
+                    console.error("Gagal load database", err); 
+                }
 
                 document.getElementById('new-trade-date').value = new Date().toISOString().split('T')[0];
                 document.getElementById('filter-month').value = this.state.filterMonth;
@@ -415,7 +419,9 @@
                 this.renderAll();
                 this.setupEventListeners();
                 
-                window.addEventListener('beforeprint', () => this.generatePrintView());
+                window.addEventListener('beforeprint', () => {
+                    this.generatePrintView();
+                });
             },
 
             async saveDataPermanently() {
@@ -429,20 +435,31 @@
 
             switchTab(tabId) {
                 this.state.activeTab = tabId;
-                document.querySelectorAll('[id^="tab-"]').forEach(el => { el.classList.remove('block'); el.classList.add('hidden'); });
-                document.getElementById(`tab-${tabId}`).classList.remove('hidden'); document.getElementById(`tab-${tabId}`).classList.add('block');
+                document.querySelectorAll('[id^="tab-"]').forEach(el => { 
+                    el.classList.remove('block'); 
+                    el.classList.add('hidden'); 
+                });
+                
+                document.getElementById(`tab-${tabId}`).classList.remove('hidden'); 
+                document.getElementById(`tab-${tabId}`).classList.add('block');
 
                 const dtTabs = ['dashboard', 'journal', 'learning'];
                 dtTabs.forEach(t => {
                     const btn = document.getElementById(`nav-desktop-${t}`);
-                    if (t === tabId) btn.className = "px-4 py-2 rounded-md text-sm font-bold transition-all flex items-center gap-2 bg-emerald-500 text-white shadow-sm";
-                    else btn.className = "px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100";
+                    if (t === tabId) {
+                        btn.className = "px-4 py-2 rounded-md text-sm font-bold transition-all flex items-center gap-2 bg-emerald-500 text-white shadow-sm";
+                    } else {
+                        btn.className = "px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100";
+                    }
                 });
 
                 dtTabs.forEach(t => {
                     const btn = document.getElementById(`nav-mobile-${t}`);
-                    if (t === tabId) btn.className = "flex flex-col items-center justify-center w-full py-3 text-emerald-600 transition-colors";
-                    else btn.className = "flex flex-col items-center justify-center w-full py-3 text-slate-400 hover:text-emerald-600 transition-colors";
+                    if (t === tabId) {
+                        btn.className = "flex flex-col items-center justify-center w-full py-3 text-emerald-600 transition-colors";
+                    } else {
+                        btn.className = "flex flex-col items-center justify-center w-full py-3 text-slate-400 hover:text-emerald-600 transition-colors";
+                    }
                 });
             },
 
@@ -474,25 +491,30 @@
                     });
                     document.getElementById('market-clocks').innerHTML = html;
                 };
-                render(); setInterval(render, 1000);
+                render(); 
+                setInterval(render, 1000);
             },
 
             toggleEditCapital() {
                 document.getElementById('capital-display').classList.add('hidden');
                 document.getElementById('btn-edit-capital').classList.add('hidden');
-                document.getElementById('capital-edit').classList.remove('hidden'); document.getElementById('capital-edit').classList.add('flex');
-                document.getElementById('input-capital').value = this.state.initialCapital; document.getElementById('input-capital').focus();
+                document.getElementById('capital-edit').classList.remove('hidden'); 
+                document.getElementById('capital-edit').classList.add('flex');
+                document.getElementById('input-capital').value = this.state.initialCapital; 
+                document.getElementById('input-capital').focus();
             },
 
             async saveCapital() {
                 this.state.initialCapital = parseFloat(document.getElementById('input-capital').value) || 0;
-                document.getElementById('capital-edit').classList.add('hidden'); document.getElementById('capital-edit').classList.remove('flex');
-                document.getElementById('capital-display').classList.remove('hidden'); document.getElementById('btn-edit-capital').classList.remove('hidden');
+                document.getElementById('capital-edit').classList.add('hidden'); 
+                document.getElementById('capital-edit').classList.remove('flex');
+                document.getElementById('capital-display').classList.remove('hidden'); 
+                document.getElementById('btn-edit-capital').classList.remove('hidden');
+                
                 this.renderDashboard();
                 await this.saveDataPermanently();
             },
 
-            // --- RESTORED METHODS START ---
             openAddTradeModal(tradeId = null) {
                 if (tradeId) {
                     this.state.editingTradeId = tradeId;
@@ -611,11 +633,25 @@
                     const img = new Image();
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 1000; const MAX_HEIGHT = 1000;
-                        let width = img.width; let height = img.height;
-                        if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
-                        else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
-                        canvas.width = width; canvas.height = height;
+                        const MAX_WIDTH = 1000; 
+                        const MAX_HEIGHT = 1000;
+                        let width = img.width; 
+                        let height = img.height;
+                        
+                        if (width > height) { 
+                            if (width > MAX_WIDTH) { 
+                                height *= MAX_WIDTH / width; 
+                                width = MAX_WIDTH; 
+                            } 
+                        } else { 
+                            if (height > MAX_HEIGHT) { 
+                                width *= MAX_HEIGHT / height; 
+                                height = MAX_HEIGHT; 
+                            } 
+                        }
+                        
+                        canvas.width = width; 
+                        canvas.height = height;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
                         callback(canvas.toDataURL('image/jpeg', 0.7)); 
@@ -631,11 +667,15 @@
 
                 files.forEach(file => {
                     this.compressImage(file, (compressedBase64) => {
-                        if(type === 'preTrade') this.state.tempPreTradeImages.push(compressedBase64);
-                        else if(type === 'entryTrade') this.state.tempEntryTradeImages.push(compressedBase64);
-                        else if(type === 'postTrade') this.state.tempPostTradeImages.push(compressedBase64);
-                        else this.state.tempLearningImages.push(compressedBase64);
-                        
+                        if(type === 'preTrade') {
+                            this.state.tempPreTradeImages.push(compressedBase64);
+                        } else if(type === 'entryTrade') {
+                            this.state.tempEntryTradeImages.push(compressedBase64);
+                        } else if(type === 'postTrade') {
+                            this.state.tempPostTradeImages.push(compressedBase64);
+                        } else {
+                            this.state.tempLearningImages.push(compressedBase64);
+                        }
                         this.renderImagePreviews(type);
                     });
                 });
@@ -643,19 +683,29 @@
             },
 
             removeImagePreview(index, type) {
-                if(type === 'preTrade') this.state.tempPreTradeImages.splice(index, 1);
-                else if(type === 'entryTrade') this.state.tempEntryTradeImages.splice(index, 1);
-                else if(type === 'postTrade') this.state.tempPostTradeImages.splice(index, 1);
-                else this.state.tempLearningImages.splice(index, 1);
+                if(type === 'preTrade') {
+                    this.state.tempPreTradeImages.splice(index, 1);
+                } else if(type === 'entryTrade') {
+                    this.state.tempEntryTradeImages.splice(index, 1);
+                } else if(type === 'postTrade') {
+                    this.state.tempPostTradeImages.splice(index, 1);
+                } else {
+                    this.state.tempLearningImages.splice(index, 1);
+                }
                 this.renderImagePreviews(type);
             },
 
             renderImagePreviews(type) {
                 let images = [];
-                if(type === 'preTrade') images = this.state.tempPreTradeImages;
-                else if(type === 'entryTrade') images = this.state.tempEntryTradeImages;
-                else if(type === 'postTrade') images = this.state.tempPostTradeImages;
-                else images = this.state.tempLearningImages;
+                if(type === 'preTrade') {
+                    images = this.state.tempPreTradeImages;
+                } else if(type === 'entryTrade') {
+                    images = this.state.tempEntryTradeImages;
+                } else if(type === 'postTrade') {
+                    images = this.state.tempPostTradeImages;
+                } else {
+                    images = this.state.tempLearningImages;
+                }
 
                 const container = document.getElementById(`${type.toLowerCase()}-images-preview`) || document.getElementById(`${type}-images-preview`);
                 if(!container) return;
@@ -665,16 +715,26 @@
                     html += `
                         <div class="relative w-16 h-16 rounded-md overflow-hidden border border-slate-200 group flex-shrink-0 shadow-sm">
                             <img src="${img}" class="w-full h-full object-cover" />
-                            <button type="button" onclick="app.removeImagePreview(${idx}, '${type}')" class="absolute inset-0 bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="x-circle" class="w-5 h-5"></i></button>
+                            <button type="button" onclick="app.removeImagePreview(${idx}, '${type}')" class="absolute inset-0 bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i data-lucide="x-circle" class="w-5 h-5"></i>
+                            </button>
                         </div>
                     `;
                 });
-                container.innerHTML = html; lucide.createIcons();
+                container.innerHTML = html; 
+                lucide.createIcons();
             },
 
-            updateFilterMonth(e) { this.state.filterMonth = e.target.value; this.renderJournal(); },
+            updateFilterMonth(e) { 
+                this.state.filterMonth = e.target.value; 
+                this.renderJournal(); 
+            },
 
-            renderAll() { this.renderDashboard(); this.renderJournal(); this.renderLearnings(); },
+            renderAll() { 
+                this.renderDashboard(); 
+                this.renderJournal(); 
+                this.renderLearnings(); 
+            },
 
             renderDashboard() {
                 const closedTrades = this.state.trades.filter(t => t.pnl !== null);
@@ -701,6 +761,7 @@
                 document.getElementById('win-rate-text').innerText = `${winRate}%`;
                 document.getElementById('win-rate-bar').style.width = `${winRate}%`;
                 document.getElementById('win-loss-text').innerText = `${winningTrades} Win / ${closedTrades.length - winningTrades} Loss`;
+                
                 lucide.createIcons();
             },
 
@@ -901,7 +962,8 @@
                     `;
                     document.getElementById('modal-learning').classList.remove('hidden');
                 }
-                lucide.createIcons(); document.body.style.overflow = 'hidden';
+                lucide.createIcons(); 
+                document.body.style.overflow = 'hidden';
             },
 
             closeModal(type) {
@@ -912,19 +974,20 @@
             async deleteItem(type, id) {
                 if(type === 'trade') {
                     this.state.trades = this.state.trades.filter(t => t.id !== id);
-                    this.closeModal('trade'); this.renderAll();
+                    this.closeModal('trade'); 
+                    this.renderAll();
                 } else {
                     this.state.learnings = this.state.learnings.filter(l => l.id !== id);
-                    this.closeModal('learning'); this.renderLearnings();
+                    this.closeModal('learning'); 
+                    this.renderLearnings();
                 }
                 await this.saveDataPermanently();
             },
-            // --- RESTORED METHODS END ---
             
-            // --- FUNGSI EXPORT PDF OTOMATIS DOWNLOAD ---
             async exportPDF() {
                 const btn = document.getElementById('btn-export-pdf');
                 const originalContent = btn.innerHTML;
+                
                 btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> <span class="hidden sm:inline">Memproses...</span>`;
                 lucide.createIcons();
 
@@ -1036,7 +1099,10 @@
             }
         };
 
-        document.addEventListener('DOMContentLoaded', () => { app.init(); });
+        // Pastikan kode hanya dijalankan setelah semua HTML termuat
+        document.addEventListener('DOMContentLoaded', () => { 
+            app.init(); 
+        });
 
     </script>
 </body>
