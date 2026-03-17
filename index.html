@@ -8,23 +8,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Tambahkan library HTML2PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
         /* Custom Scrollbar */
-        .scrollbar-thin::-webkit-scrollbar {
-            height: 6px;
-        }
-        .scrollbar-thin::-webkit-scrollbar-track {
-            background: #f1f5f9; 
-            border-radius: 4px;
-        }
-        .scrollbar-thin::-webkit-scrollbar-thumb {
-            background: #cbd5e1; 
-            border-radius: 4px;
-        }
-        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; 
-        }
+        .scrollbar-thin::-webkit-scrollbar { height: 6px; width: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         /* Print Styles */
         @media print {
@@ -45,7 +37,7 @@
          ========================================== -->
     <div id="app-view" class="print-hidden min-h-screen">
         
-        <!-- Header & Navigasi -->
+        <!-- Header -->
         <header class="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-sm">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
@@ -73,29 +65,23 @@
 
         <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
             
-            <!-- Widget Jam Global -->
             <div class="mb-4 flex items-center gap-2 text-slate-500">
                 <i data-lucide="clock" class="w-[18px] h-[18px]"></i>
                 <h2 class="font-semibold text-sm uppercase tracking-wider">Jam Pasar Global</h2>
             </div>
-            <div id="market-clocks" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <!-- Clocks rendered by JS -->
-            </div>
+            <div id="market-clocks" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"></div>
 
             <!-- --- TAB: DASHBOARD --- -->
             <div id="tab-dashboard" class="space-y-6 animate-in fade-in duration-500 block">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Modal Awal -->
                     <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm relative">
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="text-slate-500 font-medium flex items-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> Modal Awal</h3>
                             <button id="btn-edit-capital" onclick="app.toggleEditCapital()" class="text-slate-400 hover:text-emerald-500"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
                         </div>
-                        
                         <div id="capital-display" class="block">
                             <p class="text-3xl font-bold text-slate-800 tracking-tight mt-1">$<span id="initial-capital-text">0.00</span></p>
                         </div>
-                        
                         <div id="capital-edit" class="hidden items-center gap-2 mt-2">
                             <span class="text-xl text-slate-500">$</span>
                             <input type="number" id="input-capital" class="w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-slate-800 font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500" />
@@ -103,25 +89,22 @@
                         </div>
                     </div>
 
-                    <!-- Saldo Saat Ini -->
                     <div class="bg-gradient-to-br from-emerald-50 to-white border border-emerald-100 rounded-2xl p-6 shadow-sm relative">
                         <h3 class="text-emerald-700 font-medium mb-2">Saldo Saat Ini</h3>
                         <p id="current-balance" class="text-4xl font-bold tracking-tight text-emerald-600">$0.00</p>
-                        <p class="text-xs text-emerald-600/70 mt-2">Modal + Total PnL</p>
+                        <p class="text-xs text-emerald-600/70 mt-2">Modal + Total PnL (Closed Trade)</p>
                     </div>
 
-                    <!-- Total PnL -->
                     <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm relative overflow-hidden">
                         <div class="absolute top-0 right-0 p-4 opacity-[0.03] text-slate-800"><i data-lucide="dollar-sign" class="w-20 h-20"></i></div>
                         <h3 class="text-slate-500 font-medium mb-2">Net Profit/Loss</h3>
                         <p id="net-pnl" class="text-3xl font-bold tracking-tight text-slate-800">$0.00</p>
                         <div class="mt-4 flex items-center gap-2 text-sm">
                             <span id="pnl-icon"></span>
-                            <span class="text-slate-500">Total <span id="total-trades-count" class="font-bold text-slate-700">0</span> trade</span>
+                            <span class="text-slate-500">Total <span id="total-trades-count" class="font-bold text-slate-700">0</span> Trade Closed</span>
                         </div>
                     </div>
 
-                    <!-- Win Rate -->
                     <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
                         <h3 class="text-slate-500 font-medium mb-2">Win Rate</h3>
                         <p id="win-rate-text" class="text-3xl font-bold text-slate-800 tracking-tight">0%</p>
@@ -136,71 +119,14 @@
             <!-- --- TAB: JURNAL TRADING --- -->
             <div id="tab-journal" class="space-y-6 animate-in fade-in duration-500 hidden">
                 
-                <!-- Form Tambah Trade -->
-                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-                    <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                        <div class="p-1.5 bg-emerald-100 rounded-lg"><i data-lucide="plus" class="w-4 h-4 text-emerald-600"></i></div>
-                        Catat Trade Baru
-                    </h2>
-                    <form id="form-trade" class="space-y-4">
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div>
-                                <label class="block text-[10px] text-slate-500 mb-1 uppercase tracking-wider font-bold">Tanggal</label>
-                                <input type="date" id="trade-date" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-colors" />
-                            </div>
-                            <div>
-                                <label class="block text-[10px] text-slate-500 mb-1 uppercase tracking-wider font-bold">Aset (Cth: XAU)</label>
-                                <input type="text" id="trade-asset" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:outline-none uppercase transition-colors" />
-                            </div>
-                            <div>
-                                <label class="block text-[10px] text-slate-500 mb-1 uppercase tracking-wider font-bold">Posisi</label>
-                                <select id="trade-type" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-colors">
-                                    <option value="Long">Buy (Long)</option>
-                                    <option value="Short">Sell (Short)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] text-slate-500 mb-1 uppercase tracking-wider font-bold">PnL ($)</label>
-                                <input type="number" step="0.01" id="trade-pnl" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-colors" />
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[10px] text-slate-500 mb-1 flex items-center gap-1 uppercase tracking-wider font-bold"><i data-lucide="target" class="w-3 h-3"></i> TP (Opsional)</label>
-                                <input type="number" step="0.00001" id="trade-tp" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-colors" />
-                            </div>
-                            <div>
-                                <label class="block text-[10px] text-slate-500 mb-1 flex items-center gap-1 uppercase tracking-wider font-bold"><i data-lucide="shield-alert" class="w-3 h-3"></i> SL (Opsional)</label>
-                                <input type="number" step="0.00001" id="trade-sl" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-colors" />
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[10px] text-slate-500 mb-1 uppercase tracking-wider font-bold">Catatan Entry</label>
-                                <textarea id="trade-notes" placeholder="Analisa..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:outline-none h-16 resize-none transition-colors"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] text-slate-500 mb-1 flex items-center gap-1 uppercase tracking-wider font-bold"><i data-lucide="lightbulb" class="w-3 h-3 text-amber-500"></i> Pembelajaran</label>
-                                <textarea id="trade-learning" placeholder="Pelajaran..." class="w-full bg-amber-50/50 border border-amber-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-amber-500 focus:outline-none h-16 resize-none transition-colors"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col md:flex-row gap-4 items-end pt-3 border-t border-slate-100">
-                            <div class="flex-1 w-full">
-                                <label class="block text-[10px] text-slate-500 mb-1 flex items-center gap-1 uppercase tracking-wider font-bold"><i data-lucide="image" class="w-3 h-3"></i> Upload Chart (Bisa Banyak)</label>
-                                <input type="file" multiple accept="image/*" id="trade-images-input" onchange="app.handleImageUpload(event, 'trade')" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-500 file:mr-4 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 cursor-pointer transition-colors" />
-                                
-                                <div id="trade-images-preview" class="flex gap-2 mt-2 overflow-x-auto pb-1 scrollbar-thin empty:hidden">
-                                </div>
-                            </div>
-                            <button type="submit" class="w-full md:w-auto bg-slate-800 hover:bg-slate-900 text-white px-8 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm">
-                                Simpan Trade
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                <!-- Tombol Buat Jurnal Analisis Baru -->
+                <button onclick="app.openAddTradeModal()" class="w-full bg-slate-800 hover:bg-slate-900 text-white rounded-2xl p-5 shadow-sm flex flex-col items-center justify-center gap-2 border border-slate-700 transition-transform active:scale-[0.98]">
+                    <div class="bg-white/10 p-3 rounded-full">
+                        <i data-lucide="plus" class="w-6 h-6 text-emerald-400"></i>
+                    </div>
+                    <h2 class="text-lg font-bold tracking-wide">Buat Jurnal Analisis Baru</h2>
+                    <p class="text-xs text-slate-400">Catat dari POI, konfirmasi entry, hingga hasil akhir</p>
+                </button>
 
                 <!-- Filter & Export -->
                 <div class="flex justify-between items-center gap-4 bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
@@ -210,22 +136,18 @@
                             <p class="text-[10px] text-slate-400 uppercase font-bold">PnL Bulan Ini</p>
                             <p id="monthly-pnl" class="font-mono text-sm font-bold text-slate-800">$0.00</p>
                         </div>
-                        <button onclick="app.printLaporan()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 p-2 sm:px-4 sm:py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-2">
-                            <i data-lucide="printer" class="w-4 h-4"></i> <span class="hidden sm:inline">Export PDF</span>
+                        <button id="btn-export-pdf" onclick="app.exportPDF()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 p-2 sm:px-4 sm:py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-2">
+                            <i data-lucide="download" class="w-4 h-4"></i> <span class="hidden sm:inline">Export PDF</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- Riwayat Trading List -->
-                <div id="trades-list" class="space-y-3">
-                    <!-- Trades injected here -->
-                </div>
+                <div id="trades-list" class="space-y-3"></div>
             </div>
 
             <!-- --- TAB: EDUKASI --- -->
             <div id="tab-learning" class="space-y-6 animate-in fade-in duration-500 hidden">
-                
-                <!-- Form Edukasi -->
                 <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
                     <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
                         <div class="p-1.5 bg-emerald-100 rounded-lg"><i data-lucide="book-open" class="w-4 h-4 text-emerald-600"></i></div>
@@ -235,66 +157,169 @@
                         <div class="flex flex-col md:flex-row gap-4">
                             <div class="w-full md:w-1/3">
                                 <label class="block text-[10px] text-slate-500 mb-1 uppercase tracking-wider font-bold">Topik / Istilah</label>
-                                <input type="text" id="learning-term" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-colors" />
+                                <input type="text" id="learning-term" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:outline-none" />
                             </div>
                             <div class="w-full md:w-2/3">
                                 <label class="block text-[10px] text-slate-500 mb-1 uppercase tracking-wider font-bold">Penjelasan</label>
-                                <input type="text" id="learning-def" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-colors" />
+                                <input type="text" id="learning-def" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-1 focus:ring-emerald-500 focus:outline-none" />
                             </div>
                         </div>
 
                         <div class="flex flex-col md:flex-row gap-4 items-end pt-2 border-t border-slate-100">
                             <div class="flex-1 w-full">
                                 <label class="block text-[10px] text-slate-500 mb-1 flex items-center gap-1 uppercase tracking-wider font-bold"><i data-lucide="image" class="w-3 h-3"></i> Lampirkan Gambar</label>
-                                <input type="file" multiple accept="image/*" id="learning-images-input" onchange="app.handleImageUpload(event, 'learning')" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-500 file:mr-4 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 cursor-pointer transition-colors" />
-                                
-                                <div id="learning-images-preview" class="flex gap-2 mt-2 overflow-x-auto pb-1 scrollbar-thin empty:hidden">
-                                </div>
+                                <input type="file" multiple accept="image/*" onchange="app.handleImageUpload(event, 'learning')" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-500 file:mr-4 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 cursor-pointer" />
+                                <div id="learning-images-preview" class="flex gap-2 mt-2 overflow-x-auto pb-1 scrollbar-thin empty:hidden"></div>
                             </div>
-                            <button type="submit" class="w-full md:w-auto bg-slate-800 hover:bg-slate-900 text-white px-8 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm">
-                                Simpan Catatan
-                            </button>
+                            <button type="submit" class="w-full md:w-auto bg-slate-800 hover:bg-slate-900 text-white px-8 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm">Simpan Catatan</button>
                         </div>
                     </form>
                 </div>
-
-                <!-- Daftar Edukasi List -->
-                <div id="learnings-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Learnings injected here -->
-                </div>
+                <div id="learnings-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
 
         </main>
 
-        <!-- Navigasi Mobile (Bottom Bar) -->
+        <!-- Navigasi Mobile -->
         <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 flex justify-around items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
             <button onclick="app.switchTab('dashboard')" id="nav-mobile-dashboard" class="flex flex-col items-center justify-center w-full py-3 text-emerald-600 transition-colors">
-                <i data-lucide="pie-chart" class="w-6 h-6 mb-1"></i>
-                <span class="text-[10px] font-bold">Dashboard</span>
+                <i data-lucide="pie-chart" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Dashboard</span>
             </button>
             <button onclick="app.switchTab('journal')" id="nav-mobile-journal" class="flex flex-col items-center justify-center w-full py-3 text-slate-400 hover:text-emerald-600 transition-colors">
-                <i data-lucide="book-open" class="w-6 h-6 mb-1"></i>
-                <span class="text-[10px] font-bold">Jurnal</span>
+                <i data-lucide="book-open" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Jurnal</span>
             </button>
             <button onclick="app.switchTab('learning')" id="nav-mobile-learning" class="flex flex-col items-center justify-center w-full py-3 text-slate-400 hover:text-emerald-600 transition-colors">
-                <i data-lucide="book-text" class="w-6 h-6 mb-1"></i>
-                <span class="text-[10px] font-bold">Edukasi</span>
+                <i data-lucide="book-text" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Edukasi</span>
             </button>
         </nav>
     </div>
 
     <!-- ==========================================
-         MODALS (FULLSCREEN DETAILS)
+         MODAL FULLSCREEN: TAMBAH / EDIT JURNAL 
          ========================================== -->
-    
-    <!-- Modal Trade Detail -->
+    <div id="modal-add-trade" class="fixed inset-0 bg-slate-50 z-[100] overflow-y-auto hidden">
+        <form id="form-add-trade" class="min-h-screen bg-white md:w-full md:max-w-3xl md:mx-auto md:shadow-2xl">
+            <!-- Header Modal -->
+            <div class="sticky top-0 bg-white/95 backdrop-blur-md border-b border-slate-200 p-4 flex items-center justify-between z-10 shadow-sm">
+                <button type="button" onclick="app.closeAddTradeModal()" class="text-slate-500 hover:text-slate-800 font-bold px-2 py-1">Batal</button>
+                <h2 id="modal-add-title" class="font-bold text-slate-800">Jurnal Analisis Baru</h2>
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-sm">Simpan</button>
+            </div>
+
+            <div class="p-5 md:p-8 space-y-8 pb-24 text-slate-800">
+                <p class="text-xs text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-200"><i data-lucide="info" class="w-3.5 h-3.5 inline mb-0.5"></i> <b>Tips:</b> Kamu bisa mengisi bagian yang kamu ketahui saja, lalu Simpan. Kamu bisa mengeditnya lagi nanti saat harga masuk area atau setelah posisi ditutup.</p>
+                
+                <!-- 1. Data Utama -->
+                <section>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">1. Data Utama</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-[10px] text-slate-500 mb-1 uppercase font-bold">Tanggal</label>
+                            <input type="date" id="new-trade-date" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-emerald-500 focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-500 mb-1 uppercase font-bold">Aset (Cth: XAU)</label>
+                            <input type="text" id="new-trade-asset" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-emerald-500 focus:outline-none uppercase" />
+                        </div>
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="block text-[10px] text-slate-500 mb-1 uppercase font-bold">Arah Posisi</label>
+                            <select id="new-trade-type" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+                                <option value="Long">Buy (Long)</option>
+                                <option value="Short">Sell (Short)</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. Pre-Entry Analysis -->
+                <section class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                    <h3 class="text-xs font-bold text-blue-600 uppercase tracking-wider mb-4 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 2. Pre-Trade (Setup HTF)</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] text-slate-500 mb-1 uppercase font-bold">Tren / Struktur Besar (HTF)</label>
+                            <input type="text" id="new-trade-htf" placeholder="Cth: H4 Bullish Order Flow..." class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-500 mb-1 uppercase font-bold">Area POI (Titik Tunggu)</label>
+                            <textarea id="new-trade-poi" placeholder="Dimana kamu menunggu harga bereaksi? (Cth: OB H1 + FVG)" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none h-16 resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-500 mb-1 uppercase font-bold"><i data-lucide="image" class="w-3 h-3 inline"></i> Screenshot Setup (HTF)</label>
+                            <input type="file" multiple accept="image/*" onchange="app.handleImageUpload(event, 'preTrade')" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-500 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:bg-blue-100 file:text-blue-700 cursor-pointer" />
+                            <div id="pretrade-images-preview" class="flex gap-2 mt-2 overflow-x-auto pb-1 scrollbar-thin empty:hidden"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. Eksekusi / Konfirmasi M5 -->
+                <section class="bg-emerald-50 p-5 rounded-2xl border border-emerald-200">
+                    <h3 class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-4 flex items-center gap-2"><i data-lucide="crosshair" class="w-4 h-4"></i> 3. Eksekusi & Konfirmasi (LTF)</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] text-emerald-700 mb-1 uppercase font-bold">Konfirmasi LTF (Cth: M5)</label>
+                            <input type="text" id="new-trade-ltf" placeholder="Cth: Harga masuk POI lalu buat CHoCH M5..." class="w-full bg-white border border-emerald-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-emerald-500 focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-emerald-700 mb-1 uppercase font-bold">Alasan Entry & Psikologi Saat Ini</label>
+                            <textarea id="new-trade-entry-reason" placeholder="Apakah sesuai plan? Atau FOMO?" class="w-full bg-white border border-emerald-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-emerald-500 focus:outline-none h-16 resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-emerald-700 mb-1 uppercase font-bold"><i data-lucide="image" class="w-3 h-3 inline"></i> Screenshot Saat Entry (LTF)</label>
+                            <input type="file" multiple accept="image/*" onchange="app.handleImageUpload(event, 'entryTrade')" class="w-full bg-white border border-emerald-200 rounded-lg px-3 py-2 text-sm text-emerald-700 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:bg-emerald-200 file:text-emerald-800 cursor-pointer" />
+                            <div id="entrytrade-images-preview" class="flex gap-2 mt-2 overflow-x-auto pb-1 scrollbar-thin empty:hidden"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. Hasil & Post-Trade -->
+                <section class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                    <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider mb-4 flex items-center gap-2"><i data-lucide="flag" class="w-4 h-4"></i> 4. Hasil & Evaluasi (Post-Trade)</h3>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-[10px] text-slate-500 mb-1 uppercase font-bold">TP Target</label>
+                                <input type="number" step="0.00001" id="new-trade-tp" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-slate-500 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-500 mb-1 uppercase font-bold">SL Batas Rugi</label>
+                                <input type="number" step="0.00001" id="new-trade-sl" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-slate-500 focus:outline-none" />
+                            </div>
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="block text-[10px] text-slate-500 mb-1 uppercase font-bold text-slate-800">Hasil PnL ($) <span class="text-[9px] font-normal text-slate-400 bg-slate-200 px-1 rounded ml-1">Kosongi Jika Running</span></label>
+                                <input type="number" step="0.01" id="new-trade-pnl" placeholder="0.00" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-slate-800 focus:ring-1 focus:ring-slate-500 focus:outline-none" />
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[10px] text-slate-500 mb-1 uppercase font-bold">Evaluasi / Pelajaran Didapat</label>
+                            <textarea id="new-trade-learning" placeholder="Setelah hasil keluar, apa yang bisa dipelajari?" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-slate-500 focus:outline-none h-20 resize-none"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] text-slate-500 mb-1 uppercase font-bold"><i data-lucide="image" class="w-3 h-3 inline"></i> Screenshot Hasil Akhir</label>
+                            <input type="file" multiple accept="image/*" onchange="app.handleImageUpload(event, 'postTrade')" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-500 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:bg-slate-200 file:text-slate-700 cursor-pointer" />
+                            <div id="posttrade-images-preview" class="flex gap-2 mt-2 overflow-x-auto pb-1 scrollbar-thin empty:hidden"></div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </form>
+    </div>
+
+    <!-- ==========================================
+         MODAL DETAIL VIEW (BACA JURNAL)
+         ========================================== -->
     <div id="modal-trade" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] overflow-y-auto hidden">
         <div class="min-h-screen bg-white md:w-full md:max-w-4xl md:mx-auto md:my-8 md:rounded-2xl md:min-h-fit md:shadow-2xl overflow-hidden shadow-xl animate-in slide-in-from-bottom-8 duration-300">
             <div class="sticky top-0 bg-white/90 backdrop-blur-md border-b border-slate-200 p-4 flex items-center justify-between z-10">
                 <button onclick="app.closeModal('trade')" class="flex items-center gap-2 text-slate-600 hover:text-slate-900 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
                     <i data-lucide="arrow-left" class="w-4 h-4"></i> <span class="text-sm font-bold">Kembali</span>
                 </button>
-                <button id="modal-trade-delete" class="text-rose-600 bg-rose-50 p-2 rounded-lg hover:bg-rose-100 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                <div class="flex gap-2">
+                    <button id="modal-trade-edit" class="text-blue-600 bg-blue-50 p-2 rounded-lg hover:bg-blue-100 transition-colors" title="Edit Jurnal"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                    <button id="modal-trade-delete" class="text-rose-600 bg-rose-50 p-2 rounded-lg hover:bg-rose-100 transition-colors" title="Hapus Jurnal"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </div>
             </div>
             <div id="modal-trade-content" class="p-5 md:p-8 space-y-6 pb-24 md:pb-8 text-slate-800">
                 <!-- Content Injected via JS -->
@@ -311,25 +336,51 @@
                 </button>
                 <button id="modal-learning-delete" class="text-rose-600 bg-rose-50 p-2 rounded-lg hover:bg-rose-100 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
             </div>
-            <div id="modal-learning-content" class="p-5 md:p-8 space-y-6 pb-24 md:pb-8 text-slate-800">
-                 <!-- Content Injected via JS -->
-            </div>
+            <div id="modal-learning-content" class="p-5 md:p-8 space-y-6 pb-24 md:pb-8 text-slate-800"></div>
         </div>
     </div>
 
-    <!-- ==========================================
-         PRINT VIEW (CETAK PDF Laporan)
-         ========================================== -->
-    <div id="print-view" class="print-block font-sans text-black hidden p-8">
-        <!-- Content injected before print via JS -->
-    </div>
+    <!-- Print View -->
+    <div id="print-view" class="print-block font-sans text-black hidden p-8"></div>
 
 
     <!-- ==========================================
-         JAVASCRIPT LOGIC
+         JAVASCRIPT LOGIC & DATABASE
          ========================================== -->
     <script>
         lucide.createIcons();
+
+        // --- WRAPPER DATABASE INDEXEDDB ---
+        const dbHelper = {
+            dbName: 'JurnalDanrasDB',
+            storeName: 'appData',
+            init() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(this.dbName, 1);
+                    request.onupgradeneeded = (e) => { e.target.result.createObjectStore(this.storeName); };
+                    request.onsuccess = (e) => resolve(e.target.result);
+                    request.onerror = (e) => reject(e.target.error);
+                });
+            },
+            async save(key, data) {
+                const db = await this.init();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(this.storeName, 'readwrite');
+                    tx.objectStore(this.storeName).put(data, key);
+                    tx.oncomplete = () => resolve();
+                    tx.onerror = (e) => reject(e.target.error);
+                });
+            },
+            async load(key) {
+                const db = await this.init();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(this.storeName, 'readonly');
+                    const req = tx.objectStore(this.storeName).get(key);
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = (e) => reject(e.target.error);
+                });
+            }
+        };
 
         const app = {
             state: {
@@ -338,50 +389,60 @@
                 trades: [],
                 learnings: [],
                 filterMonth: new Date().toISOString().slice(0, 7),
-                newTradeImages: [],
-                newLearningImages: []
+                
+                // Form Editing State
+                editingTradeId: null,
+                tempPreTradeImages: [],
+                tempEntryTradeImages: [],
+                tempPostTradeImages: [],
+                tempLearningImages: []
             },
 
-            init() {
-                document.getElementById('trade-date').value = new Date().toISOString().split('T')[0];
+            async init() {
+                try {
+                    const savedData = await dbHelper.load('danrasState');
+                    if (savedData) {
+                        this.state.initialCapital = savedData.initialCapital || 0;
+                        this.state.trades = savedData.trades || [];
+                        this.state.learnings = savedData.learnings || [];
+                    }
+                } catch (err) { console.error("Gagal load database", err); }
+
+                document.getElementById('new-trade-date').value = new Date().toISOString().split('T')[0];
                 document.getElementById('filter-month').value = this.state.filterMonth;
 
                 this.startClocks();
                 this.renderAll();
                 this.setupEventListeners();
                 
-                // Event saat di-print lewat browser desktop
                 window.addEventListener('beforeprint', () => this.generatePrintView());
+            },
+
+            async saveDataPermanently() {
+                const dataToSave = {
+                    initialCapital: this.state.initialCapital,
+                    trades: this.state.trades,
+                    learnings: this.state.learnings
+                };
+                await dbHelper.save('danrasState', dataToSave);
             },
 
             switchTab(tabId) {
                 this.state.activeTab = tabId;
-                
-                document.querySelectorAll('[id^="tab-"]').forEach(el => {
-                    el.classList.remove('block');
-                    el.classList.add('hidden');
-                });
-                
-                document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-                document.getElementById(`tab-${tabId}`).classList.add('block');
+                document.querySelectorAll('[id^="tab-"]').forEach(el => { el.classList.remove('block'); el.classList.add('hidden'); });
+                document.getElementById(`tab-${tabId}`).classList.remove('hidden'); document.getElementById(`tab-${tabId}`).classList.add('block');
 
                 const dtTabs = ['dashboard', 'journal', 'learning'];
                 dtTabs.forEach(t => {
                     const btn = document.getElementById(`nav-desktop-${t}`);
-                    if (t === tabId) {
-                        btn.className = "px-4 py-2 rounded-md text-sm font-bold transition-all flex items-center gap-2 bg-emerald-500 text-white shadow-sm";
-                    } else {
-                        btn.className = "px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100";
-                    }
+                    if (t === tabId) btn.className = "px-4 py-2 rounded-md text-sm font-bold transition-all flex items-center gap-2 bg-emerald-500 text-white shadow-sm";
+                    else btn.className = "px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100";
                 });
 
                 dtTabs.forEach(t => {
                     const btn = document.getElementById(`nav-mobile-${t}`);
-                    if (t === tabId) {
-                        btn.className = "flex flex-col items-center justify-center w-full py-3 text-emerald-600 transition-colors";
-                    } else {
-                        btn.className = "flex flex-col items-center justify-center w-full py-3 text-slate-400 hover:text-emerald-600 transition-colors";
-                    }
+                    if (t === tabId) btn.className = "flex flex-col items-center justify-center w-full py-3 text-emerald-600 transition-colors";
+                    else btn.className = "flex flex-col items-center justify-center w-full py-3 text-slate-400 hover:text-emerald-600 transition-colors";
                 });
             },
 
@@ -394,7 +455,6 @@
                         { name: 'London', tz: 'Europe/London', flag: '🇬🇧' },
                         { name: 'Tokyo', tz: 'Asia/Tokyo', flag: '🇯🇵' },
                     ];
-
                     let html = '';
                     markets.forEach(market => {
                         const localHour = parseInt(time.toLocaleTimeString('en-US', { timeZone: market.tz, hour12: false, hour: '2-digit' }));
@@ -409,75 +469,160 @@
                                 <span class="text-2xl mb-2">${market.flag}</span>
                                 <h3 class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">${market.name}</h3>
                                 <p class="text-sm md:text-lg font-mono font-bold text-slate-800 tracking-tight">${timeStr}</p>
-                                <span class="text-[10px] mt-2 px-2 py-0.5 rounded-full font-bold ${isMarketOpen ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}">
-                                    ${isMarketOpen ? 'OPEN' : 'CLOSED'}
-                                </span>
-                            </div>
-                        `;
+                                <span class="text-[10px] mt-2 px-2 py-0.5 rounded-full font-bold ${isMarketOpen ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}">${isMarketOpen ? 'OPEN' : 'CLOSED'}</span>
+                            </div>`;
                     });
                     document.getElementById('market-clocks').innerHTML = html;
                 };
-                render();
-                setInterval(render, 1000);
+                render(); setInterval(render, 1000);
             },
 
             toggleEditCapital() {
                 document.getElementById('capital-display').classList.add('hidden');
                 document.getElementById('btn-edit-capital').classList.add('hidden');
-                document.getElementById('capital-edit').classList.remove('hidden');
-                document.getElementById('capital-edit').classList.add('flex');
-                document.getElementById('input-capital').value = this.state.initialCapital;
-                document.getElementById('input-capital').focus();
+                document.getElementById('capital-edit').classList.remove('hidden'); document.getElementById('capital-edit').classList.add('flex');
+                document.getElementById('input-capital').value = this.state.initialCapital; document.getElementById('input-capital').focus();
             },
 
-            saveCapital() {
+            async saveCapital() {
                 this.state.initialCapital = parseFloat(document.getElementById('input-capital').value) || 0;
-                document.getElementById('capital-edit').classList.add('hidden');
-                document.getElementById('capital-edit').classList.remove('flex');
-                document.getElementById('capital-display').classList.remove('hidden');
-                document.getElementById('btn-edit-capital').classList.remove('hidden');
+                document.getElementById('capital-edit').classList.add('hidden'); document.getElementById('capital-edit').classList.remove('flex');
+                document.getElementById('capital-display').classList.remove('hidden'); document.getElementById('btn-edit-capital').classList.remove('hidden');
                 this.renderDashboard();
+                await this.saveDataPermanently();
+            },
+
+            // --- RESTORED METHODS START ---
+            openAddTradeModal(tradeId = null) {
+                if (tradeId) {
+                    this.state.editingTradeId = tradeId;
+                    const trade = this.state.trades.find(t => t.id === tradeId);
+                    document.getElementById('modal-add-title').innerText = 'Edit Jurnal Analisis';
+                    
+                    document.getElementById('new-trade-date').value = trade.date;
+                    document.getElementById('new-trade-asset').value = trade.asset;
+                    document.getElementById('new-trade-type').value = trade.type;
+                    
+                    document.getElementById('new-trade-htf').value = trade.htf || '';
+                    document.getElementById('new-trade-poi').value = trade.poi || '';
+                    
+                    document.getElementById('new-trade-ltf').value = trade.ltf || '';
+                    document.getElementById('new-trade-entry-reason').value = trade.entryReason || '';
+                    
+                    document.getElementById('new-trade-tp').value = trade.tp || '';
+                    document.getElementById('new-trade-sl').value = trade.sl || '';
+                    document.getElementById('new-trade-pnl').value = trade.pnl === null ? '' : trade.pnl;
+                    document.getElementById('new-trade-learning').value = trade.learning || '';
+
+                    this.state.tempPreTradeImages = [...(trade.preImages || [])];
+                    this.state.tempEntryTradeImages = [...(trade.entryImages || [])];
+                    this.state.tempPostTradeImages = [...(trade.postImages || [])];
+                } else {
+                    this.state.editingTradeId = null;
+                    document.getElementById('modal-add-title').innerText = 'Jurnal Analisis Baru';
+                    document.getElementById('form-add-trade').reset();
+                    document.getElementById('new-trade-date').value = new Date().toISOString().split('T')[0];
+                    
+                    this.state.tempPreTradeImages = [];
+                    this.state.tempEntryTradeImages = [];
+                    this.state.tempPostTradeImages = [];
+                }
+
+                this.renderImagePreviews('preTrade');
+                this.renderImagePreviews('entryTrade');
+                this.renderImagePreviews('postTrade');
+                
+                this.closeModal('trade');
+                document.getElementById('modal-add-trade').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            },
+            
+            closeAddTradeModal() {
+                document.getElementById('modal-add-trade').classList.add('hidden');
+                document.body.style.overflow = '';
+            },
+
+            editTrade(id) {
+                this.openAddTradeModal(id);
             },
 
             setupEventListeners() {
-                document.getElementById('form-trade').addEventListener('submit', (e) => {
+                document.getElementById('form-add-trade').addEventListener('submit', async (e) => {
                     e.preventDefault();
-                    const newTrade = {
-                        id: Date.now(),
-                        date: document.getElementById('trade-date').value,
-                        asset: document.getElementById('trade-asset').value.toUpperCase(),
-                        type: document.getElementById('trade-type').value,
-                        pnl: parseFloat(document.getElementById('trade-pnl').value) || 0,
-                        tp: document.getElementById('trade-tp').value,
-                        sl: document.getElementById('trade-sl').value,
-                        notes: document.getElementById('trade-notes').value,
-                        learning: document.getElementById('trade-learning').value,
-                        images: [...this.state.newTradeImages]
-                    };
                     
-                    this.state.trades.unshift(newTrade);
-                    e.target.reset();
-                    document.getElementById('trade-date').value = new Date().toISOString().split('T')[0];
-                    this.state.newTradeImages = [];
-                    this.renderImagePreviews('trade');
+                    const pnlInput = document.getElementById('new-trade-pnl').value;
+                    const pnlValue = pnlInput === "" ? null : parseFloat(pnlInput);
+
+                    const tradeData = {
+                        date: document.getElementById('new-trade-date').value,
+                        asset: document.getElementById('new-trade-asset').value.toUpperCase(),
+                        type: document.getElementById('new-trade-type').value,
+                        
+                        htf: document.getElementById('new-trade-htf').value,
+                        poi: document.getElementById('new-trade-poi').value,
+                        preImages: [...this.state.tempPreTradeImages],
+                        
+                        ltf: document.getElementById('new-trade-ltf').value,
+                        entryReason: document.getElementById('new-trade-entry-reason').value,
+                        entryImages: [...this.state.tempEntryTradeImages],
+                        
+                        tp: document.getElementById('new-trade-tp').value,
+                        sl: document.getElementById('new-trade-sl').value,
+                        pnl: pnlValue,
+                        learning: document.getElementById('new-trade-learning').value,
+                        postImages: [...this.state.tempPostTradeImages],
+                    };
+
+                    if (this.state.editingTradeId) {
+                        const index = this.state.trades.findIndex(t => t.id === this.state.editingTradeId);
+                        if (index !== -1) {
+                            this.state.trades[index] = { ...this.state.trades[index], ...tradeData };
+                        }
+                    } else {
+                        tradeData.id = Date.now();
+                        this.state.trades.unshift(tradeData);
+                    }
+                    
+                    this.closeAddTradeModal();
                     this.renderAll();
+                    await this.saveDataPermanently();
                 });
 
-                document.getElementById('form-learning').addEventListener('submit', (e) => {
+                document.getElementById('form-learning').addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const newLearning = {
                         id: Date.now(),
                         term: document.getElementById('learning-term').value,
                         definition: document.getElementById('learning-def').value,
-                        images: [...this.state.newLearningImages]
+                        images: [...this.state.tempLearningImages]
                     };
-                    
                     this.state.learnings.unshift(newLearning);
                     e.target.reset();
-                    this.state.newLearningImages = [];
+                    this.state.tempLearningImages = [];
                     this.renderImagePreviews('learning');
                     this.renderLearnings();
+                    await this.saveDataPermanently();
                 });
+            },
+
+            compressImage(file, callback) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 1000; const MAX_HEIGHT = 1000;
+                        let width = img.width; let height = img.height;
+                        if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
+                        else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        callback(canvas.toDataURL('image/jpeg', 0.7)); 
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
             },
 
             handleImageUpload(e, type) {
@@ -485,64 +630,58 @@
                 if (files.length === 0) return;
 
                 files.forEach(file => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        if(type === 'trade') {
-                            this.state.newTradeImages.push(reader.result);
-                        } else {
-                            this.state.newLearningImages.push(reader.result);
-                        }
+                    this.compressImage(file, (compressedBase64) => {
+                        if(type === 'preTrade') this.state.tempPreTradeImages.push(compressedBase64);
+                        else if(type === 'entryTrade') this.state.tempEntryTradeImages.push(compressedBase64);
+                        else if(type === 'postTrade') this.state.tempPostTradeImages.push(compressedBase64);
+                        else this.state.tempLearningImages.push(compressedBase64);
+                        
                         this.renderImagePreviews(type);
-                    };
-                    reader.readAsDataURL(file);
+                    });
                 });
                 e.target.value = ''; 
             },
 
             removeImagePreview(index, type) {
-                if(type === 'trade') {
-                    this.state.newTradeImages.splice(index, 1);
-                } else {
-                    this.state.newLearningImages.splice(index, 1);
-                }
+                if(type === 'preTrade') this.state.tempPreTradeImages.splice(index, 1);
+                else if(type === 'entryTrade') this.state.tempEntryTradeImages.splice(index, 1);
+                else if(type === 'postTrade') this.state.tempPostTradeImages.splice(index, 1);
+                else this.state.tempLearningImages.splice(index, 1);
                 this.renderImagePreviews(type);
             },
 
             renderImagePreviews(type) {
-                const images = type === 'trade' ? this.state.newTradeImages : this.state.newLearningImages;
-                const container = document.getElementById(`${type}-images-preview`);
+                let images = [];
+                if(type === 'preTrade') images = this.state.tempPreTradeImages;
+                else if(type === 'entryTrade') images = this.state.tempEntryTradeImages;
+                else if(type === 'postTrade') images = this.state.tempPostTradeImages;
+                else images = this.state.tempLearningImages;
+
+                const container = document.getElementById(`${type.toLowerCase()}-images-preview`) || document.getElementById(`${type}-images-preview`);
+                if(!container) return;
                 
                 let html = '';
                 images.forEach((img, idx) => {
                     html += `
-                        <div class="relative w-12 h-12 rounded-md overflow-hidden border border-slate-200 group flex-shrink-0 shadow-sm">
+                        <div class="relative w-16 h-16 rounded-md overflow-hidden border border-slate-200 group flex-shrink-0 shadow-sm">
                             <img src="${img}" class="w-full h-full object-cover" />
-                            <button type="button" onclick="app.removeImagePreview(${idx}, '${type}')" class="absolute inset-0 bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <i data-lucide="x-circle" class="w-4 h-4"></i>
-                            </button>
+                            <button type="button" onclick="app.removeImagePreview(${idx}, '${type}')" class="absolute inset-0 bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="x-circle" class="w-5 h-5"></i></button>
                         </div>
                     `;
                 });
-                container.innerHTML = html;
-                lucide.createIcons();
+                container.innerHTML = html; lucide.createIcons();
             },
 
-            updateFilterMonth(e) {
-                this.state.filterMonth = e.target.value;
-                this.renderJournal();
-            },
+            updateFilterMonth(e) { this.state.filterMonth = e.target.value; this.renderJournal(); },
 
-            renderAll() {
-                this.renderDashboard();
-                this.renderJournal();
-                this.renderLearnings();
-            },
+            renderAll() { this.renderDashboard(); this.renderJournal(); this.renderLearnings(); },
 
             renderDashboard() {
-                const totalPnL = this.state.trades.reduce((acc, curr) => acc + curr.pnl, 0);
+                const closedTrades = this.state.trades.filter(t => t.pnl !== null);
+                const totalPnL = closedTrades.reduce((acc, curr) => acc + curr.pnl, 0);
                 const currentBalance = this.state.initialCapital + totalPnL;
-                const winningTrades = this.state.trades.filter(t => t.pnl > 0).length;
-                const winRate = this.state.trades.length > 0 ? ((winningTrades / this.state.trades.length) * 100).toFixed(1) : 0;
+                const winningTrades = closedTrades.filter(t => t.pnl > 0).length;
+                const winRate = closedTrades.length > 0 ? ((winningTrades / closedTrades.length) * 100).toFixed(1) : 0;
 
                 document.getElementById('initial-capital-text').innerText = this.state.initialCapital.toFixed(2);
                 
@@ -558,18 +697,16 @@
                     ? `<i data-lucide="trending-up" class="w-4 h-4 text-emerald-500"></i>` 
                     : `<i data-lucide="trending-down" class="w-4 h-4 text-rose-500"></i>`;
                 
-                document.getElementById('total-trades-count').innerText = this.state.trades.length;
-
+                document.getElementById('total-trades-count').innerText = closedTrades.length;
                 document.getElementById('win-rate-text').innerText = `${winRate}%`;
                 document.getElementById('win-rate-bar').style.width = `${winRate}%`;
-                document.getElementById('win-loss-text').innerText = `${winningTrades} Win / ${this.state.trades.length - winningTrades} Loss`;
-                
+                document.getElementById('win-loss-text').innerText = `${winningTrades} Win / ${closedTrades.length - winningTrades} Loss`;
                 lucide.createIcons();
             },
 
             renderJournal() {
                 const filteredTrades = this.state.trades.filter(t => t.date.startsWith(this.state.filterMonth));
-                const monthlyPnL = filteredTrades.reduce((acc, curr) => acc + curr.pnl, 0);
+                const monthlyPnL = filteredTrades.reduce((acc, curr) => acc + (curr.pnl !== null ? curr.pnl : 0), 0);
 
                 const pnlEl = document.getElementById('monthly-pnl');
                 pnlEl.innerText = `${monthlyPnL >= 0 ? '+' : '-'}$${Math.abs(monthlyPnL).toFixed(2)}`;
@@ -581,11 +718,24 @@
                 } else {
                     let html = '';
                     filteredTrades.forEach(trade => {
+                        const isRunning = trade.pnl === null;
                         const isProfit = trade.pnl >= 0;
+                        
+                        let statusMarker = '';
+                        let pnlText = '';
+                        
+                        if (isRunning) {
+                            statusMarker = 'bg-amber-400 animate-pulse';
+                            pnlText = `<span class="text-xs font-bold text-amber-500 bg-amber-50 px-2 py-1 rounded-full uppercase tracking-wider border border-amber-200"><i data-lucide="loader" class="w-3 h-3 inline mb-0.5 animate-spin"></i> Running</span>`;
+                        } else {
+                            statusMarker = isProfit ? 'bg-emerald-500' : 'bg-rose-500';
+                            pnlText = `<p class="font-mono font-bold text-lg ${isProfit ? 'text-emerald-600' : 'text-rose-600'}">${isProfit ? '+' : '-'}$${Math.abs(trade.pnl).toFixed(2)}</p>`;
+                        }
+
                         html += `
                             <div onclick="app.openModal('trade', ${trade.id})" class="bg-white border border-slate-200 rounded-xl p-3 flex justify-between items-center hover:bg-slate-50 transition-colors group cursor-pointer shadow-sm">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-1.5 h-10 rounded-full ${isProfit ? 'bg-emerald-500' : 'bg-rose-500'}"></div>
+                                    <div class="w-1.5 h-10 rounded-full ${statusMarker}"></div>
                                     <div>
                                         <div class="flex items-center gap-2">
                                             <h3 class="font-bold text-slate-800">${trade.asset}</h3>
@@ -595,11 +745,7 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-4">
-                                    <div class="text-right">
-                                        <p class="font-mono font-bold text-lg ${isProfit ? 'text-emerald-600' : 'text-rose-600'}">
-                                            ${isProfit ? '+' : '-'}$${Math.abs(trade.pnl).toFixed(2)}
-                                        </p>
-                                    </div>
+                                    <div class="text-right">${pnlText}</div>
                                     <button class="text-slate-400 group-hover:text-emerald-600 bg-slate-50 p-2 rounded-lg transition-colors border border-slate-100 group-hover:border-emerald-100">
                                         <i data-lucide="chevron-right" class="w-[18px] h-[18px]"></i>
                                     </button>
@@ -648,18 +794,24 @@
                     const trade = this.state.trades.find(t => t.id === id);
                     if (!trade) return;
                     
+                    const isRunning = trade.pnl === null;
                     const isProfit = trade.pnl >= 0;
-                    document.getElementById('modal-trade-delete').onclick = () => { this.deleteItem('trade', id); };
                     
-                    let imagesHtml = '';
-                    if (trade.images && trade.images.length > 0) {
-                        const imgs = trade.images.map(img => `<img src="${img}" class="w-full h-auto rounded-xl border border-slate-200 shadow-md" onclick="window.open('${img}')" />`).join('');
-                        imagesHtml = `
-                            <div>
-                                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2"><i data-lucide="image" class="w-4 h-4 text-slate-500"></i> Bukti Chart (${trade.images.length})</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${imgs}</div>
-                            </div>
-                        `;
+                    document.getElementById('modal-trade-delete').onclick = () => { this.deleteItem('trade', id); };
+                    document.getElementById('modal-trade-edit').onclick = () => { this.editTrade(id); };
+                    
+                    let preImagesHtml = '', entryImagesHtml = '', postImagesHtml = '';
+                    if (trade.preImages && trade.preImages.length > 0) {
+                        const imgs = trade.preImages.map(img => `<img src="${img}" class="w-full h-auto rounded-xl border border-slate-200 shadow-md" onclick="window.open('${img}')" />`).join('');
+                        preImagesHtml = `<div class="mt-3"><div class="grid grid-cols-1 md:grid-cols-2 gap-3">${imgs}</div></div>`;
+                    }
+                    if (trade.entryImages && trade.entryImages.length > 0) {
+                        const imgs = trade.entryImages.map(img => `<img src="${img}" class="w-full h-auto rounded-xl border border-slate-200 shadow-md" onclick="window.open('${img}')" />`).join('');
+                        entryImagesHtml = `<div class="mt-3"><div class="grid grid-cols-1 md:grid-cols-2 gap-3">${imgs}</div></div>`;
+                    }
+                    if (trade.postImages && trade.postImages.length > 0) {
+                        const imgs = trade.postImages.map(img => `<img src="${img}" class="w-full h-auto rounded-xl border border-slate-200 shadow-md" onclick="window.open('${img}')" />`).join('');
+                        postImagesHtml = `<div class="mt-3"><div class="grid grid-cols-1 md:grid-cols-2 gap-3">${imgs}</div></div>`;
                     }
 
                     document.getElementById('modal-trade-content').innerHTML = `
@@ -671,10 +823,12 @@
                             <p class="text-slate-500 font-medium flex items-center justify-center gap-1.5"><i data-lucide="clock" class="w-4 h-4"></i> ${trade.date}</p>
                             
                             <div class="mt-4 p-6 bg-slate-50 border border-slate-200 rounded-2xl w-full max-w-sm mx-auto shadow-sm">
-                                <p class="text-sm font-bold text-slate-500 mb-1">Realized Profit / Loss</p>
-                                <p class="text-5xl font-mono font-black tracking-tight ${isProfit ? 'text-emerald-600' : 'text-rose-600'}">
-                                    ${isProfit ? '+' : '-'}$${Math.abs(trade.pnl).toFixed(2)}
-                                </p>
+                                <p class="text-sm font-bold text-slate-500 mb-1">Final Result / PnL</p>
+                                ${isRunning ? 
+                                    `<p class="text-3xl font-bold text-amber-500 mt-2 flex items-center justify-center gap-2"><i data-lucide="loader" class="w-6 h-6 animate-spin"></i> RUNNING TRADE</p>` 
+                                    : 
+                                    `<p class="text-5xl font-mono font-black tracking-tight ${isProfit ? 'text-emerald-600' : 'text-rose-600'}">${isProfit ? '+' : '-'}$${Math.abs(trade.pnl).toFixed(2)}</p>`
+                                }
                             </div>
                         </div>
 
@@ -691,22 +845,38 @@
                             </div>
                         </div>
 
-                        <div class="space-y-4">
-                            <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 relative shadow-sm">
-                                <div class="absolute top-0 left-0 w-1.5 h-full bg-slate-800 rounded-l-2xl"></div>
-                                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 pl-3">Catatan Analisa / Entry</h3>
-                                <p class="text-slate-700 leading-relaxed pl-3 font-medium">${trade.notes || 'Tidak ada catatan.'}</p>
+                        <!-- 1. Bagian Analisis Pre-Entry -->
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 relative shadow-sm mt-6">
+                            <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-500 rounded-l-2xl"></div>
+                            <h3 class="text-sm font-bold text-blue-700 uppercase tracking-wider mb-4 pl-3 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> 1. Setup HTF & POI</h3>
+                            <div class="space-y-3 pl-3">
+                                <div><p class="text-[10px] font-bold text-slate-400 uppercase">Tren / Struktur Besar</p><p class="text-sm text-slate-700 font-medium">${trade.htf || '-'}</p></div>
+                                <div><p class="text-[10px] font-bold text-slate-400 uppercase mt-2">Area Tunggu (POI)</p><p class="text-sm text-slate-700 font-medium">${trade.poi || '-'}</p></div>
+                                ${preImagesHtml}
                             </div>
-
-                            ${trade.learning ? `
-                                <div class="bg-amber-50 rounded-2xl p-5 border border-amber-200 relative shadow-sm">
-                                    <div class="absolute top-0 left-0 w-1.5 h-full bg-amber-400 rounded-l-2xl"></div>
-                                    <h3 class="text-xs font-bold text-amber-600 uppercase tracking-wider mb-2 flex items-center gap-1.5 pl-3"><i data-lucide="lightbulb" class="w-3.5 h-3.5"></i> Pembelajaran Didapat</h3>
-                                    <p class="text-amber-900 leading-relaxed pl-3 font-medium">${trade.learning}</p>
-                                </div>
-                            ` : ''}
                         </div>
-                        ${imagesHtml}
+
+                        <!-- 2. Bagian Eksekusi LTF -->
+                        <div class="bg-emerald-50/50 rounded-2xl p-5 border border-emerald-200 relative shadow-sm mt-4">
+                            <div class="absolute top-0 left-0 w-1.5 h-full bg-emerald-400 rounded-l-2xl"></div>
+                            <h3 class="text-sm font-bold text-emerald-700 uppercase tracking-wider mb-4 pl-3 flex items-center gap-2"><i data-lucide="crosshair" class="w-4 h-4"></i> 2. Konfirmasi Eksekusi (LTF)</h3>
+                            <div class="space-y-3 pl-3">
+                                <div><p class="text-[10px] font-bold text-slate-400 uppercase">Konfirmasi (M5/M15)</p><p class="text-sm text-slate-700 font-medium">${trade.ltf || '-'}</p></div>
+                                <div><p class="text-[10px] font-bold text-slate-400 uppercase mt-2">Alasan Klik Entry & Psikologi</p><p class="text-sm text-slate-700 font-medium">${trade.entryReason || '-'}</p></div>
+                                ${entryImagesHtml}
+                            </div>
+                        </div>
+
+                        <!-- 3. Bagian Evaluasi Post-Entry -->
+                        <div class="bg-amber-50/50 rounded-2xl p-5 border border-amber-200 relative shadow-sm mt-4">
+                            <div class="absolute top-0 left-0 w-1.5 h-full bg-amber-400 rounded-l-2xl"></div>
+                            <h3 class="text-sm font-bold text-amber-700 uppercase tracking-wider mb-2 flex items-center gap-1.5 pl-3"><i data-lucide="flag" class="w-4 h-4"></i> 3. Evaluasi Post-Trade</h3>
+                            <div class="pl-3 mt-3">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Pelajaran yang Didapat</p>
+                                <p class="text-amber-900 leading-relaxed font-medium">${trade.learning || (isRunning ? 'Menunggu hasil...' : 'Tidak ada evaluasi.')}</p>
+                                ${postImagesHtml}
+                            </div>
+                        </div>
                     `;
                     document.getElementById('modal-trade').classList.remove('hidden');
 
@@ -719,31 +889,19 @@
                     let imagesHtml = '';
                     if (learning.images && learning.images.length > 0) {
                         const imgs = learning.images.map(img => `<img src="${img}" class="w-full h-auto rounded-xl border border-slate-200 shadow-md" onclick="window.open('${img}')" />`).join('');
-                        imagesHtml = `
-                            <div class="mt-8">
-                                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2"><i data-lucide="image" class="w-4 h-4 text-slate-500"></i> Gambar Referensi</h3>
-                                <div class="grid grid-cols-1 gap-4">${imgs}</div>
-                            </div>
-                        `;
+                        imagesHtml = `<div class="mt-8"><h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2"><i data-lucide="image" class="w-4 h-4 text-slate-500"></i> Gambar Referensi</h3><div class="grid grid-cols-1 gap-4">${imgs}</div></div>`;
                     }
 
                     document.getElementById('modal-learning-content').innerHTML = `
                         <div class="mb-4 animate-in fade-in slide-in-from-bottom-4">
-                            <div class="flex items-center gap-3 mb-6">
-                                <div class="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)]"></div>
-                                <h1 class="text-3xl md:text-4xl font-black text-slate-800 tracking-tight">${learning.term}</h1>
-                            </div>
-                            <div class="bg-emerald-50/50 rounded-2xl p-6 border border-emerald-100 shadow-sm">
-                                <p class="text-slate-700 text-lg leading-relaxed font-medium">${learning.definition}</p>
-                            </div>
+                            <div class="flex items-center gap-3 mb-6"><div class="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)]"></div><h1 class="text-3xl md:text-4xl font-black text-slate-800 tracking-tight">${learning.term}</h1></div>
+                            <div class="bg-emerald-50/50 rounded-2xl p-6 border border-emerald-100 shadow-sm"><p class="text-slate-700 text-lg leading-relaxed font-medium">${learning.definition}</p></div>
                         </div>
                         ${imagesHtml}
                     `;
                     document.getElementById('modal-learning').classList.remove('hidden');
                 }
-                
-                lucide.createIcons();
-                document.body.style.overflow = 'hidden';
+                lucide.createIcons(); document.body.style.overflow = 'hidden';
             },
 
             closeModal(type) {
@@ -751,51 +909,84 @@
                 document.body.style.overflow = '';
             },
 
-            deleteItem(type, id) {
+            async deleteItem(type, id) {
                 if(type === 'trade') {
                     this.state.trades = this.state.trades.filter(t => t.id !== id);
-                    this.closeModal('trade');
-                    this.renderAll();
+                    this.closeModal('trade'); this.renderAll();
                 } else {
                     this.state.learnings = this.state.learnings.filter(l => l.id !== id);
-                    this.closeModal('learning');
-                    this.renderLearnings();
+                    this.closeModal('learning'); this.renderLearnings();
                 }
+                await this.saveDataPermanently();
             },
+            // --- RESTORED METHODS END ---
+            
+            // --- FUNGSI EXPORT PDF OTOMATIS DOWNLOAD ---
+            async exportPDF() {
+                const btn = document.getElementById('btn-export-pdf');
+                const originalContent = btn.innerHTML;
+                btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> <span class="hidden sm:inline">Memproses...</span>`;
+                lucide.createIcons();
 
-            // LOGIKA PRINT / PDF UNTUK CORDOVA & BROWSER
-            printLaporan() {
                 this.generatePrintView();
-                
-                // Jika berjalan di dalam aplikasi Android/Cordova dengan plugin printer
-                if (window.cordova && cordova && cordova.plugins && cordova.plugins.printer) {
-                    // Plugin ini akan mencetak "seluruh window" document saat ini
-                    // Kelas "@media print" di CSS Tailwind sudah kita sediakan agar rapi
-                    cordova.plugins.printer.print();
-                } else {
-                    // Fallback jika dibuka di browser PC/Laptop biasa
-                    window.print();
+
+                const element = document.getElementById('print-view');
+                element.classList.remove('hidden');
+                element.style.position = 'absolute';
+                element.style.top = '-9999px';
+                element.style.left = '-9999px';
+                element.style.width = '800px'; 
+                element.style.backgroundColor = 'white';
+
+                const opt = {
+                    margin:       [10, 10, 10, 10],
+                    filename:     `Jurnal_Trading_${this.state.filterMonth}.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak:    { mode: ['css', 'legacy'] }
+                };
+
+                try {
+                    await html2pdf().set(opt).from(element).save();
+                    
+                    if(window.cordova) {
+                        alert("✅ PDF Berhasil Dibuat!\n\nFile telah diunduh. Silakan buka File Manager HP Anda dan cek di folder 'Download' atau 'Unduhan'.");
+                    }
+                } catch (error) {
+                    console.error("Error Export PDF:", error);
+                    alert("❌ Gagal mengekspor PDF. Terjadi kesalahan.");
+                } finally {
+                    element.classList.add('hidden');
+                    element.style.position = '';
+                    element.style.top = '';
+                    element.style.left = '';
+                    element.style.width = '';
+                    element.style.backgroundColor = '';
+                    btn.innerHTML = originalContent;
+                    lucide.createIcons();
                 }
             },
 
             generatePrintView() {
                 const filteredTrades = this.state.trades.filter(t => t.date.startsWith(this.state.filterMonth));
-                const monthlyPnL = filteredTrades.reduce((acc, curr) => acc + curr.pnl, 0);
+                const monthlyPnL = filteredTrades.reduce((acc, curr) => acc + (curr.pnl !== null ? curr.pnl : 0), 0);
 
                 let tradesHtml = '';
                 if (filteredTrades.length === 0) {
                     tradesHtml = `<p class="text-center text-gray-500 my-10">Tidak ada transaksi yang tercatat pada bulan ini.</p>`;
                 } else {
                     filteredTrades.forEach((trade, index) => {
-                        let imgsHtml = '<p class="text-gray-400 text-sm italic">Tidak ada screenshot.</p>';
-                        if (trade.images && trade.images.length > 0) {
-                            imgsHtml = `<div class="flex flex-wrap gap-2">` + 
-                                trade.images.map(img => `<img src="${img}" class="max-w-full h-auto max-h-48 border border-gray-300 rounded object-contain shadow-sm" />`).join('') +
-                            `</div>`;
-                        }
+                        let preImgs = '', entryImgs = '', postImgs = '';
+                        if (trade.preImages && trade.preImages.length > 0) preImgs = `<div class="mt-2"><p class="text-xs font-bold text-gray-500">SS Pre-Entry:</p><div class="flex gap-2">` + trade.preImages.map(img => `<img src="${img}" class="h-24 object-contain border border-gray-300" />`).join('') + `</div></div>`;
+                        if (trade.entryImages && trade.entryImages.length > 0) entryImgs = `<div class="mt-2"><p class="text-xs font-bold text-gray-500">SS Entry:</p><div class="flex gap-2">` + trade.entryImages.map(img => `<img src="${img}" class="h-24 object-contain border border-gray-300" />`).join('') + `</div></div>`;
+                        if (trade.postImages && trade.postImages.length > 0) postImgs = `<div class="mt-2"><p class="text-xs font-bold text-gray-500">SS Post-Entry:</p><div class="flex gap-2">` + trade.postImages.map(img => `<img src="${img}" class="h-24 object-contain border border-gray-300" />`).join('') + `</div></div>`;
+
+                        const isRunning = trade.pnl === null;
+                        const pnlDisplay = isRunning ? `<span style="color:#f59e0b">Running</span>` : `<span class="${trade.pnl >= 0 ? 'text-green-600' : 'text-red-600'}">${trade.pnl >= 0 ? '+' : '-'}$${Math.abs(trade.pnl).toFixed(2)}</span>`;
 
                         tradesHtml += `
-                            <div class="border border-gray-300 rounded-lg p-5 break-inside-avoid mb-8">
+                            <div class="border border-gray-300 rounded-lg p-5 break-inside-avoid mb-8" style="page-break-inside: avoid;">
                                 <div class="flex justify-between items-start mb-4 border-b border-gray-200 pb-3">
                                     <div>
                                         <h2 class="text-xl font-bold flex items-center gap-2">
@@ -806,28 +997,24 @@
                                     </div>
                                     <div class="text-right">
                                         <p class="text-sm text-gray-500">Realized PnL</p>
-                                        <p class="text-xl font-bold ${trade.pnl >= 0 ? 'text-green-600' : 'text-red-600'}">
-                                            ${trade.pnl >= 0 ? '+' : '-'}$${Math.abs(trade.pnl).toFixed(2)}
-                                        </p>
+                                        <p class="text-xl font-bold">${pnlDisplay}</p>
                                     </div>
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-6">
                                     <div>
-                                        <div class="mb-4">
-                                            <h4 class="text-sm font-bold text-gray-700 uppercase">Catatan Entry</h4>
-                                            <p class="text-gray-800 mt-1">${trade.notes || '-'}</p>
-                                        </div>
-                                        ${trade.learning ? `
-                                        <div>
-                                            <h4 class="text-sm font-bold text-gray-700 uppercase">Pembelajaran</h4>
-                                            <p class="text-gray-800 mt-1 italic">"${trade.learning}"</p>
-                                        </div>
-                                        ` : ''}
+                                        <h4 class="text-sm font-bold text-blue-700 uppercase mb-1">1. Setup & Konfirmasi</h4>
+                                        <p class="text-xs text-gray-600"><strong>HTF:</strong> ${trade.htf || '-'}</p>
+                                        <p class="text-xs text-gray-600"><strong>POI:</strong> ${trade.poi || '-'}</p>
+                                        <p class="text-xs text-gray-600 mt-2"><strong>Konfirmasi M5:</strong> ${trade.ltf || '-'}</p>
+                                        <p class="text-xs text-gray-600"><strong>Alasan:</strong> ${trade.entryReason || '-'}</p>
+                                        ${preImgs}
+                                        ${entryImgs}
                                     </div>
                                     <div>
-                                        <h4 class="text-sm font-bold text-gray-700 uppercase mb-2">Screenshot Chart</h4>
-                                        ${imgsHtml}
+                                        <h4 class="text-sm font-bold text-amber-700 uppercase mb-1">2. Evaluasi Akhir</h4>
+                                        <p class="text-xs text-gray-800 italic">"${trade.learning || (isRunning ? 'Menunggu hasil...' : '-')}"</p>
+                                        ${postImgs}
                                     </div>
                                 </div>
                             </div>
@@ -837,33 +1024,19 @@
 
                 document.getElementById('print-view').innerHTML = `
                     <div class="border-b-2 border-black pb-4 mb-6">
-                        <h1 class="text-3xl font-bold text-emerald-700">Laporan Jurnal Trading</h1>
+                        <h1 class="text-3xl font-bold text-emerald-700">Laporan Jurnal Analisis Trading</h1>
                         <p class="text-gray-600 text-lg mt-1">Periode: ${this.state.filterMonth}</p>
                     </div>
-
                     <div class="flex justify-between mb-8 bg-gray-100 p-4 rounded-lg">
-                        <div>
-                            <p class="text-sm text-gray-600 font-bold">Total Transaksi</p>
-                            <p class="text-xl font-bold">${filteredTrades.length} Trade</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm text-gray-600 font-bold">Net PnL</p>
-                            <p class="text-2xl font-bold ${monthlyPnL >= 0 ? 'text-green-600' : 'text-red-600'}">
-                                ${monthlyPnL >= 0 ? '+' : '-'}$${Math.abs(monthlyPnL).toFixed(2)}
-                            </p>
-                        </div>
+                        <div><p class="text-sm text-gray-600 font-bold">Total Transaksi</p><p class="text-xl font-bold">${filteredTrades.length} Trade</p></div>
+                        <div class="text-right"><p class="text-sm text-gray-600 font-bold">Net PnL (Closed)</p><p class="text-2xl font-bold ${monthlyPnL >= 0 ? 'text-green-600' : 'text-red-600'}">${monthlyPnL >= 0 ? '+' : '-'}$${Math.abs(monthlyPnL).toFixed(2)}</p></div>
                     </div>
-
-                    <div class="space-y-8">
-                        ${tradesHtml}
-                    </div>
+                    <div class="space-y-8">${tradesHtml}</div>
                 `;
             }
         };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            app.init();
-        });
+        document.addEventListener('DOMContentLoaded', () => { app.init(); });
 
     </script>
 </body>
